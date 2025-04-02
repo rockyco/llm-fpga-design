@@ -26,23 +26,95 @@ The peak picker algorithm:
 - Applies filtering to identify true peaks
 - Returns the locations (indices) of detected peaks
 
-## LLM-Aided Design Workflow
+## LLM-Based HLS Code Generation and Debugging Workflow
 
-Our methodology follows these key steps:
+Our comprehensive workflow automates the entire process from MATLAB algorithm to optimized HLS implementation:
 
 ```mermaid
-graph TD
-    A[MATLAB Reference Code] --> B[Structured LLM Prompt]
-    B --> C[Initial HLS Implementation]
-    C --> D[C Simulation]
-    D -->|Errors| E[LLM Debug Assistant]
-    E --> D
-    D -->|Success| F[HLS Synthesis & Optimization]
-    F --> G[RTL Generation]
-    G --> H[Hardware Implementation]
+graph TB
+    subgraph Inputs
+        A[MATLAB Prototype Files] -->|Input| B(Generate HLS Code)
+        P[Prompt Template] -->|Format| B
+    end
+
+    subgraph AI_Code_Generation [AI Code Generation Process]
+        B -->|Creates Prompt| C{Select LLM Service}
+        C -->|Default| D[Gemini API]
+        C -->|Fallback| E[OpenAI API]
+        C -->|Fallback| F[Claude API]
+        
+        D & E & F -->|Generate| G[LLM Response]
+        G -->|Parse| H[Extract Code]
+        H -->|Save| I[Generated HLS Files]
+    end
+
+    subgraph Outputs
+        I -->|Header| J[component.hpp]
+        I -->|Implementation| K[component.cpp]
+        I -->|Testbench| L[component_tb.cpp]
+    end
+
+    subgraph Verification
+        J & K & L -->|Compile & Run| M[C Simulation]
+        M -->|Pass| N[HLS Synthesis]
+        M -->|Fail| O[Error Logs]
+    end
+
+    subgraph AI_Debug_Assistant [AI Debug Assistant]
+        O -->|Input| Q(Debug Assistant)
+        J & K & L -->|Source Code| Q
+        Q -->|Creates Debug Prompt| R{Select LLM Service}
+        R -->|Default| S[Gemini API]
+        R -->|Fallback| T[OpenAI API]
+        R -->|Fallback| U[Claude API]
+        
+        S & T & U -->|Analyze| V[LLM Debug Analysis]
+        V -->|Generate| W[Debug Report]
+        V -->|Extract| X[Code Fixes]
+        X -->|Optional| Y[Apply Fixes]
+        Y -->|Update| J & K & L
+    end
+
+    style D fill:#34A853,stroke:#34A853,color:white
+    style S fill:#34A853,stroke:#34A853,color:white
+    style G fill:#F9AB00,stroke:#F9AB00,color:white
+    style V fill:#F9AB00,stroke:#F9AB00,color:white
+    style I fill:#4285F4,stroke:#4285F4,color:white
+    style W fill:#4285F4,stroke:#4285F4,color:white
 ```
 
-### 1. Prompt Engineering for Code Generation
+### Workflow Stages
+
+#### 1. Input Stage
+- **MATLAB Prototype Files**: Reference algorithm implementation in MATLAB
+- **Prompt Template**: Structured instructions for the LLM to follow when generating HLS code
+
+#### 2. AI Code Generation Process
+- **Creates Prompt**: Combines MATLAB code with template for comprehensive context
+- **Select LLM Service**: Chooses between Gemini (default), OpenAI, or Claude APIs
+- **LLM Response**: Raw text response containing code and explanations
+- **Extract Code**: Parses response to identify different file types and code sections
+- **Generated HLS Files**: Creates properly structured C++ files ready for simulation
+
+#### 3. Output Stage
+- **Header File**: Contains class definitions, function declarations, and constants
+- **Implementation File**: Contains the core HLS algorithm implementation with pragmas
+- **Testbench File**: Includes data loading, function calls, and verification logic
+
+#### 4. Verification Stage
+- **C Simulation**: Compile and test the generated code for functional correctness
+- **HLS Synthesis**: If simulation passes, proceed to hardware synthesis
+- **Error Logs**: If simulation fails, collect error information for debugging
+
+#### 5. AI Debug Assistant Stage
+- **Debug Assistant**: Takes error logs and source files as input
+- **Creates Debug Prompt**: Structures the debugging context for LLM analysis
+- **LLM Analysis**: AI analyzes errors and suggests specific code fixes
+- **Debug Report**: Comprehensive explanation of issues and solutions
+- **Code Fixes**: Specific code changes that can be automatically applied
+- **Apply Fixes**: Update source files with AI-suggested corrections
+
+### Prompt Engineering for Code Generation
 
 We've developed specialized prompt templates for effective code generation:
 
@@ -69,28 +141,78 @@ for FPGA deployment using Xilinx HLS directives.
 [Additional sections...]
 ```
 
-### 2. LLM-Aided Debugging
+## How the Debug Assistant Works
 
-When C simulation fails, we use structured prompts to help LLMs diagnose and fix errors:
+The debug assistant provides automated, AI-powered analysis and correction of HLS simulation errors:
 
-1. Provide the error message and relevant code
-2. Ask for analysis of potential causes
-3. Request specific fixes for the identified issues
+```mermaid
+graph TD
+    subgraph Inputs
+        A[Error Log] -->|read_file| C
+        B[HLS C++ Source Files] -->|read_file| D
+    end
 
-Example debugging workflow:
+    subgraph Processing
+        C[Extract Error Information] --> E
+        D[Parse Source Code] --> E
+        E[Create Debug Prompt] --> F
+    end
 
-```markdown
-C simulation failed with error: 'Size mismatch! Result: 0, Reference: 1
-Test FAILED: Output does not match reference.'
+    subgraph LLM_Analysis
+        F[Query LLM API] -->|model selection| G{Select Model}
+        G -->|gemini-2.0-pro-exp| H[Gemini API]
+        G -->|gpt-4/gpt-3.5-turbo| I[OpenAI API]
+        G -->|claude-sonnet| J[Claude API]
+        H --> K[LLM Analysis Response]
+        I --> K
+        J --> K
+    end
 
-[LLM analyzes the code and identifies incorrect comparison logic]
+    subgraph Outputs
+        K --> L[Generate Debug Report]
+        K --> M[Parse Code Corrections]
+        
+        L --> N[Save Markdown Report]
+        M --> O[Apply Code Fixes]
+        O -->|user confirmation| P[Edit Source Files]
+    end
 
-Fix: Replace `if (maxCheckCount == windowLength)` with 
-`if (maxCheckCount == validSeqCount)` to correctly check if the candidate 
-point is a maximum for all sequences that exceeded the threshold.
+    style H fill:#34A853,stroke:#34A853,color:white
+    style K fill:#F9AB00,stroke:#F9AB00,color:white
+    style P fill:#4285F4,stroke:#4285F4,color:white
+    style N fill:#4285F4,stroke:#4285F4,color:white
 ```
 
-### 3. LLM Selection and Integration
+### Debug Workflow Stages
+
+#### 1. Inputs Processing
+- **Error Log Analysis**: Extracts meaningful error patterns from C simulation logs
+- **Source Code Parsing**: Gathers relevant source files to provide complete context
+
+#### 2. Processing
+- **Extract Error Information**: Identifies specific error messages and patterns
+- **Parse Source Code**: Organizes code context for the LLM
+- **Create Debug Prompt**: Structures the debugging request with all relevant information
+
+#### 3. LLM Analysis
+- **Query LLM API**: Sends the prompt to the selected AI service
+- **Model Selection**: Chooses between Gemini (primary), GPT, or Claude models
+- **LLM Response**: AI analyzes the issues and provides detailed debugging guidance
+
+#### 4. Outputs
+- **Generate Debug Report**: Creates detailed markdown reports explaining errors and fixes
+- **Parse Code Corrections**: Extracts specific code changes from the LLM response
+- **Apply Code Fixes**: Optionally implements the suggested changes with user confirmation
+- **Edit Source Files**: Updates the original files with proper change tracking
+
+The debug assistant handles common HLS errors including:
+- Interface mismatches between implementation and testbench
+- Data type inconsistencies
+- Indexing errors
+- Algorithmic logical errors
+- Misunderstandings of HLS-specific behaviors
+
+## LLM Selection and Integration
 
 Our tools support multiple LLM providers with different capabilities:
 
@@ -100,7 +222,7 @@ Our tools support multiple LLM providers with different capabilities:
 
 The framework automatically selects appropriate models based on task complexity, or allows specifying a model for specific use cases.
 
-### 4. Automated File Generation and Management
+## Automated File Generation and Management
 
 The `generate_hls_code.py` tool implements sophisticated code extraction algorithms to:
 
@@ -167,25 +289,6 @@ source ~/.bashrc
    make csynth
    make export_ip
    ```
-
-## How the Debug Assistant Works
-
-The `debug_assistant.py` script implements a sophisticated debugging workflow:
-
-1. **Error Analysis**: Extracts meaningful error patterns from C simulation logs
-2. **Context Collection**: Gathers relevant source files to provide complete context
-3. **Specialized Prompting**: Creates detailed debugging prompts with structured sections
-4. **LLM Consultation**: Sends prompts to your chosen LLM service through their API
-5. **Fix Extraction**: Parses responses to identify code corrections
-6. **Report Generation**: Creates detailed markdown reports of the debugging session
-7. **Fix Application**: Optionally applies changes while creating backups
-
-The tool is designed to handle common HLS errors including:
-- Interface mismatches between implementation and testbench
-- Data type inconsistencies
-- Indexing errors
-- Algorithmic logical errors
-- Misunderstandings of HLS-specific behaviors
 
 ## Code Generation Process
 
