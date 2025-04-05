@@ -9,12 +9,9 @@
 xcorr = readmatrix('pssCorrMagSq_3_in.txt','Delimiter', 'tab');
 % Read the threshold from a file.
 threshold = readmatrix('threshold_in.txt','Delimiter', 'tab');
-% Set the window length for the peak picker.
-% This is the length of the window used to find the peaks.
-% The window length should be an odd number.
-windowLength = 11;
+
 % Call the peakPicker function.
-[peakLocs] = peakPicker(xcorr, threshold, windowLength);
+[peakLocs] = peakPicker(xcorr, threshold);
 % Write the output to a file.
 writematrix(peakLocs, 'peakLocs_out.txt','Delimiter', 'tab');
 % Read the reference output from a file.
