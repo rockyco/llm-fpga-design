@@ -1,0 +1,81 @@
+{
+  "generate_code": {
+    "agent": "code_generator",
+    "context": {
+      "args": {
+        "matlab_file": ["<MATLAB_FILE>"],
+        "prompt": "<PROMPT_FILE>",
+        "output_dir": "<OUTPUT_DIR>",
+        "model": "gemini-2.5-pro-exp-03-25",
+        "timeout": 600
+      }
+    },
+    "update_context": {
+      "component_dir": "output.stdout"
+    },
+    "next": "generate_makefile",
+    "on_error": "stop"
+  },
+  "generate_makefile": {
+    "agent": "makefile_generator",
+    "context": {
+      "work_dir": "<COMPONENT_DIR>",
+      "component": "<COMPONENT>",
+      "template_makefile": "<PROJECT_DIR>/scripts/Makefile"
+    },
+    "next": "build_csim",
+    "on_error": "stop"
+  },
+  "build_csim": {
+    "agent": "hls_builder",
+    "context": {
+      "work_dir": "<COMPONENT_DIR>",
+      "target": "csim"
+    },
+    "next": "build_csynth",
+    "on_error": "debug_errors"
+  },
+  "debug_errors": {
+    "agent": "debug_assistant",
+    "context": {
+      "args": {
+        "error_log": "<COMPONENT_DIR>/proj_<COMPONENT>/solution1/csim/report/<COMPONENT>_csim.log",
+        "source_file": [
+          "<COMPONENT_DIR>/<COMPONENT>.hpp",
+          "<COMPONENT_DIR>/<COMPONENT>.cpp",
+          "<COMPONENT_DIR>/<COMPONENT>_tb.cpp"
+        ],
+        "model": "gemini-2.5-pro-exp-03-25",
+        "timeout": 300
+      }
+    },
+    "next": "build_csim",
+    "on_error": "build_csynth"
+  },
+  "build_csynth": {
+    "agent": "hls_builder",
+    "context": {
+      "work_dir": "<COMPONENT_DIR>",
+      "target": "csynth"
+    },
+    "next": "build_cosim",
+    "on_error": "stop"
+  },
+  "build_cosim": {
+    "agent": "hls_builder",
+    "context": {
+      "work_dir": "<COMPONENT_DIR>",
+      "target": "cosim"
+    },
+    "next": "export_ip",
+    "on_error": "stop"
+  },
+  "export_ip": {
+    "agent": "hls_builder",
+    "context": {
+      "work_dir": "<COMPONENT_DIR>",
+      "target": "export_ip"
+    },
+    "on_error": "stop"
+  }
+}

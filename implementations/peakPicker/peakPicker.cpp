@@ -1,119 +1,105 @@
+/* AUTO-EDITED BY DEBUG ASSISTANT */
 #include "peakPicker.hpp"
 
 /**
- * @brief Core implementation of the peak picker algorithm for HLS.
+ * @brief Core implementation of the peak picker algorithm.
  *
- * Implements a sliding window approach to find peaks where the center element
- * exceeds a threshold and is the maximum within the window for at least one sequence.
+ * This function implements the sliding window peak detection logic described
+ * in the MATLAB reference (`peakPicker.m`). It identifies local maxima in
+ * the `xcorrStream` that are also above the corresponding `thresholdStream` value.
+ *
+ * Optimizations:
+ * - Loop Pipelining (II=1): Enables processing one sample per clock cycle after initial latency.
+ * - Array Partitioning: Allows parallel access to window buffer elements for faster comparison.
  */
 void peakPicker(
-    hls::stream<InputSample_t>& xcorrStream,
-    hls::stream<InputSample_t>& thresholdStream,
-    hls::stream<Index_t>& locationsStream,
-    int dataLength
+    XcorrStream&    xcorrStream,
+    ThresholdStream& thresholdStream,
+    int             numSamples,
+    LocationStream& locationStream
 ) {
-    // --- HLS Interface Pragmas ---
-    // Map streams to AXI-Stream interfaces
-    #pragma HLS INTERFACE axis port=xcorrStream      bundle=INPUT_STREAM
-    #pragma HLS INTERFACE axis port=thresholdStream  bundle=INPUT_STREAM
-    #pragma HLS INTERFACE axis port=locationsStream  bundle=OUTPUT_STREAM
+    // --- HLS Directives ---
+    // Apply DATAFLOW if this function is part of a larger pipelined design.
+    // For standalone use, PIPELINE on the main loop is often sufficient.
+    // #pragma HLS DATAFLOW
 
-    // Map scalar arguments and control signals to AXI-Lite
-    #pragma HLS INTERFACE s_axilite port=dataLength bundle=CONTROL_BUS
-    #pragma HLS INTERFACE s_axilite port=return    bundle=CONTROL_BUS
+    // Window buffers to hold the current sliding window data
+    DataType xcorrWindow[WINDOW_LENGTH];
+    DataType thresholdWindow[WINDOW_LENGTH];
 
-    // Enable task-level pipelining (Dataflow) if applicable to the broader design context
-    // For this single-loop function, PIPELINE is the primary optimization.
-    // #pragma HLS DATAFLOW // Uncomment if peakPicker is part of a larger dataflow region
+    // --- HLS Directives for Window Buffers ---
+    // Partitioning the arrays allows parallel access during the max check.
+    // 'complete' partitioning creates individual registers for each element.
+    #pragma HLS ARRAY_PARTITION variable=xcorrWindow complete dim=1
+    #pragma HLS ARRAY_PARTITION variable=thresholdWindow complete dim=1
 
-    // --- Local Buffers (Line Buffers for Sliding Window) ---
-    // Buffer to hold the current window of correlation samples
-    InputSample_t windowBuffer[WINDOW_LENGTH];
-    // Buffer to hold the corresponding threshold values for the window center check
-    InputSample_t thresholdBuffer[WINDOW_LENGTH];
-
-    // --- HLS Optimization Pragmas for Buffers ---
-    // Partition arrays completely to allow parallel access needed for II=1 pipeline
-    #pragma HLS ARRAY_PARTITION variable=windowBuffer complete dim=1
-    #pragma HLS ARRAY_PARTITION variable=thresholdBuffer complete dim=1
-    // For small arrays like these, partitioning into registers is efficient.
-    // If WINDOW_LENGTH were much larger (e.g., > 64 or 128), BRAM with partitioning
-    // might be considered using BIND_STORAGE.
+    // Initialize window buffers (optional, but good practice)
+    // This loop will be unrolled by HLS.
+    INIT_WINDOW_LOOP: for (int i = 0; i < WINDOW_LENGTH; ++i) {
+        #pragma HLS UNROLL
+        xcorrWindow[i] = 0;
+        thresholdWindow[i] = 0;
+    }
 
     // --- Main Processing Loop ---
-    // Iterates through each sample of the input streams
-    for (int i = 0; i < dataLength; ++i) {
-        // Apply pipeline directive for high throughput (Initiation Interval = 1)
+    // Iterate through all input samples.
+    PROCESS_SAMPLES_LOOP: for (int i = 0; i < numSamples; ++i) {
+        // --- HLS Directive for Pipelining ---
+        // Target an initiation interval (II) of 1 cycle.
         #pragma HLS PIPELINE II=1
 
-        // --- Read Inputs ---
-        InputSample_t currentXcorrSample = xcorrStream.read();
-        InputSample_t currentThresholdSample = thresholdStream.read();
-
-        // --- Shift Window Buffers ---
-        // Shift existing data down by one position
-        SHIFT_BUFFERS_LOOP:
-        for (int k = 0; k < WINDOW_LENGTH - 1; ++k) {
-            #pragma HLS UNROLL // Unroll this small loop for parallel register moves
-            windowBuffer[k] = windowBuffer[k + 1];
-            thresholdBuffer[k] = thresholdBuffer[k + 1];
+        // 1. Shift window buffers
+        // Shift existing elements to make space for the new one.
+        // This implements the buffer shift logic from MATLAB.
+        SHIFT_WINDOW_LOOP: for (int j = WINDOW_LENGTH - 1; j > 0; --j) {
+            // No need for explicit UNROLL here, PIPELINE handles sequential dependencies.
+            xcorrWindow[j] = xcorrWindow[j - 1];
+            thresholdWindow[j] = thresholdWindow[j - 1];
         }
-        // Add the new samples to the end of the buffers
-        windowBuffer[WINDOW_LENGTH - 1] = currentXcorrSample;
-        thresholdBuffer[WINDOW_LENGTH - 1] = currentThresholdSample;
 
-        // --- Peak Detection Logic ---
-        // Start processing only after the window buffer is full
+        // 2. Read new samples from input streams
+        DataType currentXcorr;
+        DataType currentThreshold;
+        xcorrStream >> currentXcorr;
+        thresholdStream >> currentThreshold;
+
+        // 3. Insert new samples into the window buffers at the 'newest' position (index 0)
+        xcorrWindow[0] = currentXcorr;
+        thresholdWindow[0] = currentThreshold;
+
+        // 4. Check for peak condition after the window is filled
+        // The check is valid only when at least WINDOW_LENGTH samples have been processed.
+        // The candidate peak corresponds to the sample currently at the middle location.
         if (i >= WINDOW_LENGTH - 1) {
-            // Get the sample and threshold corresponding to the middle of the window
-            // These were read MIDDLE_LOCATION iterations ago and are now at index MIDDLE_LOCATION
-            InputSample_t middleXcorrSample = windowBuffer[MIDDLE_LOCATION];
-            InputSample_t middleThreshold = thresholdBuffer[MIDDLE_LOCATION];
+            // Get the middle sample and its corresponding threshold
+            DataType midSample = xcorrWindow[MIDDLE_LOCATION];
+            DataType midThreshold = thresholdWindow[MIDDLE_LOCATION];
 
-            // Calculate the absolute index (0-based) of the middle sample in the original sequence
-            // Index i corresponds to the *end* of the current window.
-            // The window covers indices [i - WINDOW_LENGTH + 1, i].
-            // The middle element is at absolute index: (i - WINDOW_LENGTH + 1) + MIDDLE_LOCATION
-            Index_t candidateIndexAbs = i - WINDOW_LENGTH + 1 + MIDDLE_LOCATION;
-
-            bool peakFound = false; // Flag: set if peak condition met for ANY sequence
-
-            // Check each sequence for peak conditions
-            CHECK_SEQUENCES_LOOP:
-            for (int s = 0; s < NUM_SEQUENCES; ++s) {
-                #pragma HLS UNROLL // Unroll sequence check for parallelism
-
-                // Condition 1: Middle value must be >= threshold for this sequence
-                if (middleXcorrSample[s] >= middleThreshold[s]) {
-
-                    // Condition 2: Middle value must be the maximum in the window for this sequence
-                    bool isMaxInWindow = true;
-                    CHECK_WINDOW_MAX_LOOP:
-                    for (int k = 0; k < WINDOW_LENGTH; ++k) {
-                        #pragma HLS UNROLL // Unroll window check for parallelism
-                        // Compare middle element with every element in the window for sequence 's'
-                        if (middleXcorrSample[s] < windowBuffer[k][s]) {
-                            isMaxInWindow = false;
-                            break; // No need to check further in this window for this sequence
-                        }
-                    } // end CHECK_WINDOW_MAX_LOOP
-
-                    // If both conditions met for this sequence 's', a peak is found at this location.
-                    // The MATLAB code outputs the location if *any* sequence meets the criteria.
-                    if (isMaxInWindow) {
-                        peakFound = true;
-                        // Optimization: If a peak is found for any sequence,
-                        // we can stop checking other sequences for this window position.
-                        break; // Exit CHECK_SEQUENCES_LOOP
-                    }
-                } // end if (threshold check)
-            } // end CHECK_SEQUENCES_LOOP
-
-            // --- Write Output ---
-            // If a peak was found for any sequence at this candidate location, write the index.
-            if (peakFound) {
-                locationsStream.write(candidateIndexAbs);
+            // Check if the middle sample is the maximum in the window
+            bool isMax = true;
+            CHECK_MAX_LOOP: for (int k = 0; k < WINDOW_LENGTH; ++k) {
+                 // No need for explicit UNROLL here, partitioning enables parallel checks within II=1.
+                // Note: MATLAB uses <= 0 after subtraction. Here we compare directly.
+                // Ensure comparison matches MATLAB: middle sample must be >= all others.
+                // This check correctly implements that: if any other element is strictly greater,
+                // midSample is not the maximum.
+                if (xcorrWindow[k] > midSample) {
+                    isMax = false;
+                    break; // Exit early if a larger element is found
+                }
             }
-        } // end if (window full)
-    } // end main processing loop
+
+            // Peak condition: Middle sample is local maximum AND exceeds threshold
+            if (isMax && (midSample > midThreshold)) {
+                // Calculate the index of the detected peak.
+                // The sample at the middle of the *current* window (index `MIDDLE_LOCATION`)
+                // corresponds to the input sample from `MIDDLE_LOCATION` iterations ago.
+                // This gives the 0-based index.
+                LocationType peakLocation = i - MIDDLE_LOCATION;
+
+                // Write the detected peak location to the output stream
+                locationStream << peakLocation;
+            }
+        }
+    } // end PROCESS_SAMPLES_LOOP
 }
