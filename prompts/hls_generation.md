@@ -1,33 +1,32 @@
-# Copilot Instructions for Peak Picker Implementation
+# Copilot Instructions for {component} Implementation
 
 ## Project Context
 
-This project implements a critical component of a 5G NR SSB (Synchronization Signal Block) detection application. Specifically, the peak picker algorithm identifies SSB signals by detecting peaks where the maximum magnitude squared of the PSS (Primary Synchronization Signal) correlation (`xcorr`) within a windowed sequence exceeds a predefined `threshold`. The reference implementation is provided in MATLAB (`peakPicker.m`) along with a testbench (`peakPicker_tb.m`).
+This project implements a component for an FPGA-based signal processing application. The {component} algorithm needs to be translated from a reference implementation to efficient HLS C++ code for FPGA deployment.
 
 ## Task Description
 
-Your task is to translate the MATLAB peak picker algorithm into efficient HLS C++ code while preserving exact functionality. The implementation should be optimized for FPGA deployment using Xilinx HLS directives.
+Your task is to translate the reference {component} algorithm into efficient HLS C++ code while preserving exact functionality. The implementation should be optimized for FPGA deployment using Xilinx HLS directives.
 
 **Required Files:**
 
-- `peakPicker.hpp`: Header file with type definitions, function declarations, and parameters
-- `peakPicker.cpp`: Implementation file with the core algorithm
-- `peakPicker_tb.cpp`: C++ testbench that validates the implementation against reference data
+- `{component}.hpp`: Header file with type definitions, function declarations, and parameters
+- `{component}.cpp`: Implementation file with the core algorithm
+- `{component}_tb.cpp`: C++ testbench that validates the implementation against reference data
 
 ## Input/Output Specifications
 
 - **Inputs:**
-  - PSS correlation magnitude squared values (fixed-point stream)
-  - Threshold value (fixed-point)
+  - [To be specified based on {component} requirements]
 - **Outputs:**
-  - Peak locations (integer indices)
+  - [To be specified based on {component} requirements]
 
 ## Implementation Requirements
 
 ### Functional Requirements
 
-- Implement the `peakPicker()` function in HLS C++ with exactly the same behavior as the MATLAB reference
-- Follow bit-accurate implementation of the MATLAB algorithm (results must match reference within specified error margins)
+- Implement the `{component}()` function in HLS C++ with exactly the same behavior as the reference
+- Follow bit-accurate implementation of the reference algorithm (results must match reference within specified error margins)
 - Document code thoroughly with comments explaining the algorithm and optimization decisions
 
 ### Interface and Data Type Requirements
@@ -35,14 +34,14 @@ Your task is to translate the MATLAB peak picker algorithm into efficient HLS C+
 - Use `hls::stream` interfaces with appropriate buffer depths for streaming data
 - Implement fixed-point arithmetic with `ap_fixed<W,I>` (specify exact bit widths based on precision requirements)
 - Use `hls::complex<ap_fixed<W,I>>` for any complex number operations
-- Define all constant parameters in `peakPicker.hpp` using `#define` or `constexpr`
+- Define all constant parameters in `{component}.hpp` using `#define` or `constexpr`
 - Create descriptive type aliases with `typedef` or `using` statements
 
-### File I/O and Validation only in testbench file `peakPicker_tb.cpp`
+### File I/O and Validation only in testbench file `{component}_tb.cpp`
 
-- Read input PSS correlation data from `pssCorrMagSq_#_in.txt` (one float value per line)
-- Read threshold values from `threshold_in.txt` (one float value per line)
-- Read reference peak locations from `locations_#_ref.txt` (one integer value per line)
+- Read input data from `{component}_in.txt` (one value per line)
+- Read threshold values from `threshold_in.txt` (one value per line)
+- Read reference output data from `{component}_ref.txt` (one value per line)
 - Implement robust error checking for file operations with clear error messages
 - Calculate and report both absolute and relative errors between your implementation and reference values
 
@@ -57,8 +56,8 @@ Your task is to translate the MATLAB peak picker algorithm into efficient HLS C+
 
 ### Coding Style
 
-- Define all constants, types, and function declarations in `peakPicker.hpp`
-- Implement core algorithm in `peakPicker.cpp` with consistent style
+- Define all constants, types, and function declarations in `{component}.hpp`
+- Implement core algorithm in `{component}.cpp` with consistent style
 - Follow naming convention: camelCase for variables, PascalCase for types
 - Use self-documenting identifier names that clearly reflect their purpose
 

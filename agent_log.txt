@@ -1,521 +1,97 @@
-2025-04-04 20:37:19,448 [INFO] Registered agent: code_generator
-2025-04-04 20:37:19,448 [INFO] Registered agent: debug_assistant
-2025-04-04 20:37:19,448 [INFO] Registered agent: hls_builder
-2025-04-04 20:37:19,448 [INFO] Workflow defined with 6 steps
-2025-04-04 20:37:19,448 [INFO] Starting workflow execution
-2025-04-04 20:37:19,448 [INFO] Executing workflow step: generate_code
-2025-04-04 20:37:19,448 [INFO] Running agent code_generator for step generate_code
-2025-04-04 20:37:19,448 [INFO] Agent code_generator status: running
-2025-04-04 20:37:19,448 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m --matlab_file algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.0-pro-exp
-2025-04-04 20:37:20,372 [ERROR] Agent code_generator: Command failed with return code 1: 
-2025-04-04 20:37:20,372 [INFO] Agent code_generator status: failed - Command failed with return code 1: 
-2025-04-04 20:37:20,372 [INFO] Encountered error, running error handling: stop
-2025-04-04 20:37:20,373 [INFO] Workflow completed with status: failed
-2025-04-04 20:37:20,373 [ERROR] Agent workflow failed
-2025-04-04 20:42:17,994 [INFO] Registered agent: code_generator
-2025-04-04 20:42:17,994 [INFO] Registered agent: debug_assistant
-2025-04-04 20:42:17,994 [INFO] Registered agent: hls_builder
-2025-04-04 20:42:17,994 [INFO] Workflow defined with 6 steps
-2025-04-04 20:42:17,994 [INFO] Starting workflow execution
-2025-04-04 20:42:17,994 [INFO] Executing workflow step: generate_code
-2025-04-04 20:42:17,994 [INFO] Running agent code_generator for step generate_code
-2025-04-04 20:42:17,994 [INFO] Agent code_generator status: running
-2025-04-04 20:42:17,994 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m --matlab_file algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.0-pro-exp
-2025-04-04 20:43:40,227 [INFO] Agent code_generator status: success
-2025-04-04 20:43:40,228 [INFO] Executing workflow step: build_csim
-2025-04-04 20:43:40,228 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 20:43:40,228 [INFO] Agent hls_builder status: running
-2025-04-04 20:43:40,228 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 20:43:43,515 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 20:43:43,515 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 20:43:43,515 [INFO] Encountered error, running error handling: debug_errors
-2025-04-04 20:43:43,515 [INFO] Agent debug_assistant status: running
-2025-04-04 20:43:43,515 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 20:43:43,688 [ERROR] Agent debug_assistant: Command failed with return code 1: 
-2025-04-04 20:43:43,688 [INFO] Agent debug_assistant status: failed - Command failed with return code 1: 
-2025-04-04 20:43:43,688 [INFO] Workflow completed with status: failed
-2025-04-04 20:43:43,688 [ERROR] Agent workflow failed
-2025-04-04 20:54:33,359 [INFO] Registered agent: code_generator
-2025-04-04 20:54:33,359 [INFO] Registered agent: debug_assistant
-2025-04-04 20:54:33,360 [INFO] Registered agent: hls_builder
-2025-04-04 20:54:33,360 [INFO] Workflow defined with 6 steps
-2025-04-04 20:54:33,360 [INFO] Starting workflow execution
-2025-04-04 20:54:33,360 [INFO] Executing workflow step: generate_code
-2025-04-04 20:54:33,360 [INFO] Running agent code_generator for step generate_code
-2025-04-04 20:54:33,360 [INFO] Agent code_generator status: running
-2025-04-04 20:54:33,360 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m --matlab_file algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.0-pro-exp
-2025-04-04 20:55:48,192 [INFO] Agent code_generator status: success
-2025-04-04 20:55:48,193 [INFO] Executing workflow step: build_csim
-2025-04-04 20:55:48,193 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 20:55:48,193 [INFO] Agent hls_builder status: running
-2025-04-04 20:55:48,193 [ERROR] Agent hls_builder: Error running make: Invalid working directory: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
-2025-04-04 20:55:48,193 [INFO] Agent hls_builder status: failed - Error running make: Invalid working directory: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
-2025-04-04 20:55:48,193 [INFO] Encountered error, running error handling: debug_errors
-2025-04-04 20:55:48,193 [INFO] Agent debug_assistant status: running
-2025-04-04 20:55:48,194 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 20:55:48,344 [ERROR] Agent debug_assistant: Command failed with return code 1: 
-2025-04-04 20:55:48,345 [INFO] Agent debug_assistant status: failed - Command failed with return code 1: 
-2025-04-04 20:55:48,345 [INFO] Workflow completed with status: failed
-2025-04-04 20:55:48,345 [ERROR] Agent workflow failed
-2025-04-04 21:06:06,243 [INFO] Registered agent: code_generator
-2025-04-04 21:06:06,243 [INFO] Registered agent: debug_assistant
-2025-04-04 21:06:06,243 [INFO] Registered agent: hls_builder
-2025-04-04 21:06:06,243 [INFO] Workflow defined with 6 steps
-2025-04-04 21:06:06,243 [INFO] Starting workflow execution
-2025-04-04 21:06:06,243 [INFO] Executing workflow step: generate_code
-2025-04-04 21:06:06,243 [INFO] Running agent code_generator for step generate_code
-2025-04-04 21:06:06,243 [INFO] Agent code_generator status: running
-2025-04-04 21:06:06,243 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m --matlab_file algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.0-pro-exp
-2025-04-04 21:07:28,747 [INFO] Agent code_generator status: success
-2025-04-04 21:07:28,747 [INFO] Executing workflow step: build_csim
-2025-04-04 21:07:28,747 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 21:07:28,747 [INFO] Agent hls_builder status: running
-2025-04-04 21:07:28,748 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 21:07:28,751 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 21:07:28,751 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 21:07:28,751 [INFO] Encountered error, running error handling: debug_errors
-2025-04-04 21:07:28,751 [INFO] Agent debug_assistant status: running
-2025-04-04 21:07:28,751 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 21:07:28,918 [ERROR] Agent debug_assistant: Command failed with return code 1: 
-2025-04-04 21:07:28,918 [INFO] Agent debug_assistant status: failed - Command failed with return code 1: 
-2025-04-04 21:07:28,918 [INFO] Workflow completed with status: failed
-2025-04-04 21:07:28,918 [ERROR] Agent workflow failed
-2025-04-04 21:26:32,386 [INFO] Registered agent: code_generator
-2025-04-04 21:26:32,386 [INFO] Registered agent: debug_assistant
-2025-04-04 21:26:32,387 [INFO] Registered agent: makefile_generator
-2025-04-04 21:26:32,387 [INFO] Registered agent: hls_builder
-2025-04-04 21:26:32,387 [INFO] Workflow defined with 7 steps
-2025-04-04 21:26:32,387 [INFO] Starting workflow execution
-2025-04-04 21:26:32,387 [INFO] Executing workflow step: generate_code
-2025-04-04 21:26:32,387 [INFO] Running agent code_generator for step generate_code
-2025-04-04 21:26:32,387 [INFO] Agent code_generator status: running
-2025-04-04 21:26:32,387 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m --matlab_file algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.0-pro-exp
-2025-04-04 21:27:52,983 [INFO] Agent code_generator status: success
-2025-04-04 21:27:52,983 [INFO] Executing workflow step: generate_makefile
-2025-04-04 21:27:52,983 [INFO] Running agent makefile_generator for step generate_makefile
-2025-04-04 21:27:52,983 [INFO] Agent makefile_generator status: running
-2025-04-04 21:27:52,983 [INFO] Generating Makefile for peakPicker in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
-2025-04-04 21:27:52,983 [INFO] Generated Makefile from template at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/Makefile
-2025-04-04 21:27:52,983 [INFO] Agent makefile_generator status: success
-2025-04-04 21:27:52,983 [INFO] Executing workflow step: build_csim
-2025-04-04 21:27:52,983 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 21:27:52,983 [INFO] Agent hls_builder status: running
-2025-04-04 21:27:52,984 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 21:28:00,389 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 21:28:00,390 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 21:28:00,390 [INFO] Encountered error, running error handling: debug_errors
-2025-04-04 21:28:00,390 [INFO] Agent debug_assistant status: running
-2025-04-04 21:28:00,390 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 21:28:00,549 [ERROR] Agent debug_assistant: Command failed with return code 1: 
-2025-04-04 21:28:00,549 [INFO] Agent debug_assistant status: failed - Command failed with return code 1: 
-2025-04-04 21:28:00,549 [INFO] Workflow completed with status: failed
-2025-04-04 21:28:00,549 [ERROR] Agent workflow failed
-2025-04-04 21:41:16,793 [INFO] Registered agent: code_generator
-2025-04-04 21:41:16,793 [INFO] Registered agent: debug_assistant
-2025-04-04 21:41:16,793 [INFO] Registered agent: makefile_generator
-2025-04-04 21:41:16,794 [INFO] Registered agent: hls_builder
-2025-04-04 21:41:16,794 [INFO] Workflow defined with 7 steps
-2025-04-04 21:41:16,794 [INFO] Starting workflow execution
-2025-04-04 21:41:16,794 [INFO] Executing workflow step: generate_code
-2025-04-04 21:41:16,794 [INFO] Running agent code_generator for step generate_code
-2025-04-04 21:41:16,794 [INFO] Agent code_generator status: running
-2025-04-04 21:41:16,794 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m --matlab_file algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.0-pro-exp
-2025-04-04 21:42:45,434 [INFO] Agent code_generator status: success
-2025-04-04 21:42:45,434 [INFO] Executing workflow step: generate_makefile
-2025-04-04 21:42:45,434 [INFO] Running agent makefile_generator for step generate_makefile
-2025-04-04 21:42:45,435 [INFO] Agent makefile_generator status: running
-2025-04-04 21:42:45,435 [INFO] Generating Makefile for peakPicker in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
-2025-04-04 21:42:45,435 [INFO] Generated Makefile from template at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/Makefile
-2025-04-04 21:42:45,435 [INFO] Agent makefile_generator status: success
-2025-04-04 21:42:45,435 [INFO] Executing workflow step: build_csim
-2025-04-04 21:42:45,435 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 21:42:45,435 [INFO] Agent hls_builder status: running
-2025-04-04 21:42:45,436 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 21:42:52,499 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 21:42:52,499 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 21:42:52,499 [INFO] Encountered error, running error handling: debug_errors
-2025-04-04 21:42:52,499 [INFO] Agent debug_assistant status: running
-2025-04-04 21:42:52,499 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 22:03:16,983 [INFO] Registered agent: code_generator
-2025-04-04 22:03:16,983 [INFO] Registered agent: debug_assistant
-2025-04-04 22:03:16,983 [INFO] Registered agent: makefile_generator
-2025-04-04 22:03:16,983 [INFO] Registered agent: hls_builder
-2025-04-04 22:03:16,983 [INFO] Workflow defined with 7 steps
-2025-04-04 22:03:16,983 [INFO] Starting workflow execution
-2025-04-04 22:03:16,983 [INFO] Executing workflow step: generate_code
-2025-04-04 22:03:16,983 [INFO] Running agent code_generator for step generate_code
-2025-04-04 22:03:16,983 [INFO] Agent code_generator status: running
-2025-04-04 22:03:16,983 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m --matlab_file algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.0-pro-exp
-2025-04-04 22:04:44,889 [INFO] Agent code_generator status: success
-2025-04-04 22:04:44,889 [INFO] Executing workflow step: generate_makefile
-2025-04-04 22:04:44,890 [INFO] Running agent makefile_generator for step generate_makefile
-2025-04-04 22:04:44,890 [INFO] Agent makefile_generator status: running
-2025-04-04 22:04:44,890 [INFO] Generating Makefile for peakPicker in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
-2025-04-04 22:04:44,890 [INFO] Generated Makefile from template at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/Makefile
-2025-04-04 22:04:44,890 [INFO] Agent makefile_generator status: success
-2025-04-04 22:04:44,890 [INFO] Executing workflow step: build_csim
-2025-04-04 22:04:44,890 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 22:04:44,890 [INFO] Agent hls_builder status: running
-2025-04-04 22:04:44,890 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 22:05:00,040 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 22:05:00,041 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 22:05:00,041 [INFO] Encountered error, running error handling: debug_errors
-2025-04-04 22:05:00,041 [INFO] Agent debug_assistant status: running
-2025-04-04 22:05:00,041 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 22:14:14,572 [INFO] Registered agent: code_generator
-2025-04-04 22:14:14,573 [INFO] Registered agent: debug_assistant
-2025-04-04 22:14:14,573 [INFO] Registered agent: makefile_generator
-2025-04-04 22:14:14,573 [INFO] Registered agent: hls_builder
-2025-04-04 22:14:14,573 [INFO] Workflow defined with 7 steps
-2025-04-04 22:14:14,573 [INFO] Starting workflow execution
-2025-04-04 22:14:14,573 [INFO] Executing workflow step: generate_code
-2025-04-04 22:14:14,573 [INFO] Running agent code_generator for step generate_code
-2025-04-04 22:14:14,573 [INFO] Agent code_generator status: running
-2025-04-04 22:14:14,573 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m --matlab_file algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.0-pro-exp
-2025-04-04 22:15:29,218 [INFO] Agent code_generator status: success
-2025-04-04 22:15:29,218 [INFO] Executing workflow step: generate_makefile
-2025-04-04 22:15:29,219 [INFO] Running agent makefile_generator for step generate_makefile
-2025-04-04 22:15:29,219 [INFO] Agent makefile_generator status: running
-2025-04-04 22:15:29,219 [INFO] Generating Makefile for peakPicker in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
-2025-04-04 22:15:29,219 [INFO] Generated Makefile from template at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/Makefile
-2025-04-04 22:15:29,220 [INFO] Agent makefile_generator status: success
-2025-04-04 22:15:29,220 [INFO] Executing workflow step: build_csim
-2025-04-04 22:15:29,220 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 22:15:29,220 [INFO] Agent hls_builder status: running
-2025-04-04 22:15:29,220 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 22:15:36,420 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 22:15:36,420 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 22:15:36,421 [INFO] Encountered error, running error handling: debug_errors
-2025-04-04 22:15:36,421 [INFO] Agent debug_assistant status: running
-2025-04-04 22:15:36,421 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 22:16:04,442 [INFO] Agent debug_assistant status: success
-2025-04-04 22:16:04,443 [INFO] Executing workflow step: debug_errors
-2025-04-04 22:16:04,443 [INFO] Running agent debug_assistant for step debug_errors
-2025-04-04 22:16:04,443 [INFO] Agent debug_assistant status: running
-2025-04-04 22:16:04,443 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 22:16:37,344 [INFO] Agent debug_assistant status: success
-2025-04-04 22:16:37,344 [INFO] Executing workflow step: build_csynth
-2025-04-04 22:16:37,344 [INFO] Running agent hls_builder for step build_csynth
-2025-04-04 22:16:37,345 [INFO] Agent hls_builder status: running
-2025-04-04 22:16:37,345 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csynth
-2025-04-04 22:16:52,721 [INFO] Agent hls_builder status: success
-2025-04-04 22:16:52,722 [INFO] Executing workflow step: build_cosim
-2025-04-04 22:16:52,722 [INFO] Running agent hls_builder for step build_cosim
-2025-04-04 22:16:52,722 [INFO] Agent hls_builder status: running
-2025-04-04 22:16:52,722 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make cosim
-2025-04-04 22:17:03,732 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 22:17:03,732 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 22:17:03,732 [INFO] Workflow stopped due to error and 'stop' directive
-2025-04-04 22:17:03,732 [INFO] Workflow completed with status: failed
-2025-04-04 22:17:03,732 [ERROR] Agent workflow failed
-2025-04-04 22:27:12,408 [INFO] Registered agent: code_generator
-2025-04-04 22:27:12,409 [INFO] Registered agent: debug_assistant
-2025-04-04 22:27:12,409 [INFO] Registered agent: makefile_generator
-2025-04-04 22:27:12,409 [INFO] Registered agent: hls_builder
-2025-04-04 22:27:12,409 [INFO] Workflow defined with 7 steps
-2025-04-04 22:27:12,409 [INFO] Starting workflow execution
-2025-04-04 22:27:12,409 [INFO] Executing workflow step: generate_code
-2025-04-04 22:27:12,409 [INFO] Running agent code_generator for step generate_code
-2025-04-04 22:27:12,409 [INFO] Agent code_generator status: running
-2025-04-04 22:27:12,409 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m --matlab_file algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.0-pro-exp
-2025-04-04 22:28:33,581 [INFO] Agent code_generator status: success
-2025-04-04 22:28:33,581 [INFO] Executing workflow step: generate_makefile
-2025-04-04 22:28:33,581 [INFO] Running agent makefile_generator for step generate_makefile
-2025-04-04 22:28:33,581 [INFO] Agent makefile_generator status: running
-2025-04-04 22:28:33,582 [INFO] Generating Makefile for peakPicker in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
-2025-04-04 22:28:33,582 [INFO] Generated Makefile from template at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/Makefile
-2025-04-04 22:28:33,582 [INFO] Agent makefile_generator status: success
-2025-04-04 22:28:33,583 [INFO] Executing workflow step: build_csim
-2025-04-04 22:28:33,583 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 22:28:33,583 [INFO] Agent hls_builder status: running
-2025-04-04 22:28:33,583 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 22:28:49,727 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 22:28:49,728 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 22:28:49,728 [INFO] Encountered error, running error handling: debug_errors
-2025-04-04 22:28:49,728 [INFO] Agent debug_assistant status: running
-2025-04-04 22:28:49,728 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 23:01:08,218 [INFO] Registered agent: code_generator
-2025-04-04 23:01:08,218 [INFO] Registered agent: debug_assistant
-2025-04-04 23:01:08,219 [INFO] Registered agent: makefile_generator
-2025-04-04 23:01:08,219 [INFO] Registered agent: hls_builder
-2025-04-04 23:01:08,219 [INFO] Workflow defined with 7 steps
-2025-04-04 23:01:08,219 [INFO] Starting workflow execution
-2025-04-04 23:01:08,219 [INFO] Executing workflow step: generate_code
-2025-04-04 23:01:08,219 [INFO] Running agent code_generator for step generate_code
-2025-04-04 23:01:08,219 [INFO] Agent code_generator status: running
-2025-04-04 23:01:08,219 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m --matlab_file algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.0-pro-exp
-2025-04-04 23:02:29,223 [INFO] Agent code_generator status: success
-2025-04-04 23:02:29,224 [INFO] Executing workflow step: generate_makefile
-2025-04-04 23:02:29,224 [INFO] Running agent makefile_generator for step generate_makefile
-2025-04-04 23:02:29,224 [INFO] Agent makefile_generator status: running
-2025-04-04 23:02:29,224 [INFO] Generating Makefile for peakPicker in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
-2025-04-04 23:02:29,224 [INFO] Generated Makefile from template at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/Makefile
-2025-04-04 23:02:29,224 [INFO] Agent makefile_generator status: success
-2025-04-04 23:02:29,224 [INFO] Executing workflow step: build_csim
-2025-04-04 23:02:29,225 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 23:02:29,225 [INFO] Agent hls_builder status: running
-2025-04-04 23:02:29,225 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 23:02:37,269 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 23:02:37,269 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 23:02:37,269 [INFO] Encountered error, running error handling: debug_errors
-2025-04-04 23:02:37,270 [INFO] Agent debug_assistant status: running
-2025-04-04 23:02:37,270 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 23:03:26,227 [INFO] Agent debug_assistant status: success
-2025-04-04 23:03:26,227 [INFO] Executing workflow step: debug_errors
-2025-04-04 23:03:26,227 [INFO] Running agent debug_assistant for step debug_errors
-2025-04-04 23:03:26,227 [INFO] Agent debug_assistant status: running
-2025-04-04 23:03:26,227 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 23:04:16,430 [INFO] Agent debug_assistant status: success
-2025-04-04 23:04:16,430 [INFO] Executing workflow step: build_csynth
-2025-04-04 23:04:16,430 [INFO] Running agent hls_builder for step build_csynth
-2025-04-04 23:04:16,430 [INFO] Agent hls_builder status: running
-2025-04-04 23:04:16,430 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csynth
-2025-04-04 23:04:32,519 [INFO] Agent hls_builder status: success
-2025-04-04 23:04:32,519 [INFO] Executing workflow step: build_cosim
-2025-04-04 23:04:32,519 [INFO] Running agent hls_builder for step build_cosim
-2025-04-04 23:04:32,519 [INFO] Agent hls_builder status: running
-2025-04-04 23:04:32,519 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make cosim
-2025-04-04 23:04:43,223 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 23:04:43,224 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 23:04:43,224 [INFO] Workflow stopped due to error and 'stop' directive
-2025-04-04 23:04:43,224 [INFO] Workflow completed with status: failed
-2025-04-04 23:04:43,224 [ERROR] Agent workflow failed
-2025-04-04 23:29:22,262 [INFO] Registered agent: code_generator
-2025-04-04 23:29:22,262 [INFO] Registered agent: debug_assistant
-2025-04-04 23:29:22,262 [INFO] Registered agent: makefile_generator
-2025-04-04 23:29:22,262 [INFO] Registered agent: hls_builder
-2025-04-04 23:29:22,262 [INFO] Workflow defined with 7 steps
-2025-04-04 23:29:22,262 [INFO] Starting workflow execution
-2025-04-04 23:29:22,262 [INFO] Executing workflow step: generate_code
-2025-04-04 23:29:22,262 [INFO] Running agent code_generator for step generate_code
-2025-04-04 23:29:22,262 [INFO] Agent code_generator status: running
-2025-04-04 23:29:22,262 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m --matlab_file algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.0-pro-exp
-2025-04-04 23:30:43,675 [INFO] Agent code_generator status: success
-2025-04-04 23:30:43,675 [INFO] Executing workflow step: generate_makefile
-2025-04-04 23:30:43,676 [INFO] Running agent makefile_generator for step generate_makefile
-2025-04-04 23:30:43,676 [INFO] Agent makefile_generator status: running
-2025-04-04 23:30:43,676 [INFO] Generating Makefile for peakPicker in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
-2025-04-04 23:30:43,676 [INFO] Generated Makefile from template at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/Makefile
-2025-04-04 23:30:43,676 [INFO] Agent makefile_generator status: success
-2025-04-04 23:30:43,676 [INFO] Executing workflow step: build_csim
-2025-04-04 23:30:43,677 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 23:30:43,677 [INFO] Agent hls_builder status: running
-2025-04-04 23:30:43,677 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 23:30:51,416 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 23:30:51,416 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 23:30:51,416 [INFO] Starting debug cycle
-2025-04-04 23:30:51,416 [INFO] Executing workflow step: debug_errors
-2025-04-04 23:30:51,416 [INFO] Running agent debug_assistant for step debug_errors
-2025-04-04 23:30:51,417 [INFO] Agent debug_assistant status: running
-2025-04-04 23:30:51,417 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 23:32:09,841 [INFO] Agent debug_assistant status: success
-2025-04-04 23:32:09,841 [INFO] Executing workflow step: build_csim
-2025-04-04 23:32:09,842 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 23:32:09,842 [INFO] Agent hls_builder status: running
-2025-04-04 23:32:09,842 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 23:32:15,239 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 23:32:15,240 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 23:32:15,240 [WARNING] Build still failing after debug attempt 1/3
-2025-04-04 23:32:15,240 [INFO] Executing workflow step: debug_errors
-2025-04-04 23:32:15,240 [INFO] Running agent debug_assistant for step debug_errors
-2025-04-04 23:32:15,240 [INFO] Agent debug_assistant status: running
-2025-04-04 23:32:15,240 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 23:42:50,556 [INFO] Registered agent: code_generator
-2025-04-04 23:42:50,556 [INFO] Registered agent: debug_assistant
-2025-04-04 23:42:50,556 [INFO] Registered agent: makefile_generator
-2025-04-04 23:42:50,556 [INFO] Registered agent: hls_builder
-2025-04-04 23:42:50,556 [INFO] Workflow defined with 7 steps
-2025-04-04 23:42:50,556 [INFO] Starting workflow execution
-2025-04-04 23:42:50,556 [INFO] Executing workflow step: generate_code
-2025-04-04 23:42:50,556 [INFO] Running agent code_generator for step generate_code
-2025-04-04 23:42:50,556 [INFO] Agent code_generator status: running
-2025-04-04 23:42:50,556 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m --matlab_file algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.0-pro-exp
-2025-04-04 23:44:21,406 [INFO] Agent code_generator status: success
-2025-04-04 23:44:21,406 [INFO] Executing workflow step: generate_makefile
-2025-04-04 23:44:21,406 [INFO] Running agent makefile_generator for step generate_makefile
-2025-04-04 23:44:21,406 [INFO] Agent makefile_generator status: running
-2025-04-04 23:44:21,407 [INFO] Generating Makefile for peakPicker in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
-2025-04-04 23:44:21,407 [INFO] Generated Makefile from template at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/Makefile
-2025-04-04 23:44:21,407 [INFO] Agent makefile_generator status: success
-2025-04-04 23:44:21,407 [INFO] Executing workflow step: build_csim
-2025-04-04 23:44:21,407 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 23:44:21,407 [INFO] Agent hls_builder status: running
-2025-04-04 23:44:21,408 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 23:44:29,409 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 23:44:29,409 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 23:44:29,409 [INFO] Starting debug cycle
-2025-04-04 23:44:29,409 [INFO] Executing workflow step: debug_errors
-2025-04-04 23:44:29,409 [INFO] Running agent debug_assistant for step debug_errors
-2025-04-04 23:44:29,409 [INFO] Agent debug_assistant status: running
-2025-04-04 23:44:29,409 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 23:45:14,097 [INFO] Agent debug_assistant status: success
-2025-04-04 23:45:14,097 [INFO] Executing workflow step: build_csim
-2025-04-04 23:45:14,097 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 23:45:14,097 [INFO] Agent hls_builder status: running
-2025-04-04 23:45:14,097 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 23:45:20,735 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 23:45:20,735 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 23:45:20,735 [WARNING] Build still failing after debug attempt 1/3
-2025-04-04 23:45:20,735 [INFO] Executing workflow step: debug_errors
-2025-04-04 23:45:20,735 [INFO] Running agent debug_assistant for step debug_errors
-2025-04-04 23:45:20,735 [INFO] Agent debug_assistant status: running
-2025-04-04 23:45:20,735 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 23:46:03,996 [INFO] Agent debug_assistant status: success
-2025-04-04 23:46:03,997 [INFO] Executing workflow step: build_csim
-2025-04-04 23:46:03,997 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 23:46:03,998 [INFO] Agent hls_builder status: running
-2025-04-04 23:46:03,998 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 23:46:10,748 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 23:46:10,749 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 23:46:10,749 [WARNING] Build still failing after debug attempt 2/3
-2025-04-04 23:46:10,749 [INFO] Executing workflow step: debug_errors
-2025-04-04 23:46:10,749 [INFO] Running agent debug_assistant for step debug_errors
-2025-04-04 23:46:10,749 [INFO] Agent debug_assistant status: running
-2025-04-04 23:46:10,749 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 23:46:59,880 [INFO] Agent debug_assistant status: success
-2025-04-04 23:46:59,880 [INFO] Executing workflow step: build_csim
-2025-04-04 23:46:59,880 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 23:46:59,880 [INFO] Agent hls_builder status: running
-2025-04-04 23:46:59,881 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 23:47:06,636 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 23:47:06,637 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 23:47:06,637 [WARNING] Build still failing after debug attempt 3/3
-2025-04-04 23:47:06,637 [WARNING] Maximum debug attempts reached, returning to code generation
-2025-04-04 23:47:06,637 [INFO] Executing workflow step: generate_code
-2025-04-04 23:47:06,637 [INFO] Running agent code_generator for step generate_code
-2025-04-04 23:47:06,638 [INFO] Agent code_generator status: running
-2025-04-04 23:47:06,638 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m --matlab_file algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.0-pro-exp
-2025-04-04 23:48:27,035 [INFO] Agent code_generator status: success
-2025-04-04 23:48:27,036 [INFO] Executing workflow step: generate_makefile
-2025-04-04 23:48:27,036 [INFO] Running agent makefile_generator for step generate_makefile
-2025-04-04 23:48:27,036 [INFO] Agent makefile_generator status: running
-2025-04-04 23:48:27,036 [INFO] Generating Makefile for peakPicker in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
-2025-04-04 23:48:27,036 [INFO] Generated Makefile from template at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/Makefile
-2025-04-04 23:48:27,037 [INFO] Agent makefile_generator status: success
-2025-04-04 23:48:27,037 [INFO] Executing workflow step: build_csim
-2025-04-04 23:48:27,037 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 23:48:27,037 [INFO] Agent hls_builder status: running
-2025-04-04 23:48:27,037 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 23:48:42,764 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 23:48:42,765 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 23:48:42,765 [INFO] Starting debug cycle
-2025-04-04 23:48:42,765 [INFO] Executing workflow step: debug_errors
-2025-04-04 23:48:42,765 [INFO] Running agent debug_assistant for step debug_errors
-2025-04-04 23:48:42,765 [INFO] Agent debug_assistant status: running
-2025-04-04 23:48:42,765 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-04 23:49:58,081 [INFO] Agent debug_assistant status: success
-2025-04-04 23:49:58,081 [INFO] Executing workflow step: build_csim
-2025-04-04 23:49:58,081 [INFO] Running agent hls_builder for step build_csim
-2025-04-04 23:49:58,081 [INFO] Agent hls_builder status: running
-2025-04-04 23:49:58,081 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-04 23:50:08,676 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-04 23:50:08,676 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-04 23:50:08,676 [WARNING] Build still failing after debug attempt 1/3
-2025-04-04 23:50:08,676 [INFO] Executing workflow step: debug_errors
-2025-04-04 23:50:08,676 [INFO] Running agent debug_assistant for step debug_errors
-2025-04-04 23:50:08,676 [INFO] Agent debug_assistant status: running
-2025-04-04 23:50:08,676 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.0-pro-exp
-2025-04-05 10:09:28,462 [INFO] Registered agent: code_generator
-2025-04-05 10:09:28,463 [INFO] Registered agent: debug_assistant
-2025-04-05 10:09:28,463 [INFO] Registered agent: makefile_generator
-2025-04-05 10:09:28,463 [INFO] Registered agent: hls_builder
-2025-04-05 10:09:28,463 [INFO] Workflow defined with 7 steps
-2025-04-05 10:09:28,463 [INFO] Starting workflow execution
-2025-04-05 10:09:28,463 [INFO] Executing workflow step: generate_code
-2025-04-05 10:09:28,463 [INFO] Running agent code_generator for step generate_code
-2025-04-05 10:09:28,463 [INFO] Agent code_generator status: running
-2025-04-05 10:09:28,463 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.5-pro-exp-03-25
-2025-04-05 10:10:55,127 [INFO] Agent code_generator status: success
-2025-04-05 10:10:55,127 [INFO] Executing workflow step: generate_makefile
-2025-04-05 10:10:55,127 [INFO] Running agent makefile_generator for step generate_makefile
-2025-04-05 10:10:55,127 [INFO] Agent makefile_generator status: running
-2025-04-05 10:10:55,127 [INFO] Generating Makefile for peakPicker in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
-2025-04-05 10:10:55,128 [INFO] Generated Makefile from template at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/Makefile
-2025-04-05 10:10:55,128 [INFO] Agent makefile_generator status: success
-2025-04-05 10:10:55,128 [INFO] Executing workflow step: build_csim
-2025-04-05 10:10:55,128 [INFO] Running agent hls_builder for step build_csim
-2025-04-05 10:10:55,128 [INFO] Agent hls_builder status: running
-2025-04-05 10:10:55,129 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-05 10:11:02,058 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-05 10:11:02,059 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-05 10:11:02,059 [INFO] Starting debug cycle
-2025-04-05 10:11:02,059 [INFO] Executing workflow step: debug_errors
-2025-04-05 10:11:02,059 [INFO] Running agent debug_assistant for step debug_errors
-2025-04-05 10:11:02,059 [INFO] Agent debug_assistant status: running
-2025-04-05 10:11:02,059 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.5-pro-exp-03-25
-2025-04-05 10:12:21,924 [INFO] Agent debug_assistant status: success
-2025-04-05 10:12:21,924 [INFO] Executing workflow step: build_csim
-2025-04-05 10:12:21,924 [INFO] Running agent hls_builder for step build_csim
-2025-04-05 10:12:21,924 [INFO] Agent hls_builder status: running
-2025-04-05 10:12:21,925 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-05 10:12:29,189 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-05 10:12:29,189 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-05 10:12:29,189 [WARNING] Build still failing after debug attempt 1/3
-2025-04-05 10:12:29,190 [INFO] Executing workflow step: debug_errors
-2025-04-05 10:12:29,190 [INFO] Running agent debug_assistant for step debug_errors
-2025-04-05 10:12:29,190 [INFO] Agent debug_assistant status: running
-2025-04-05 10:12:29,190 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.5-pro-exp-03-25
-2025-04-05 10:14:50,800 [INFO] Agent debug_assistant status: success
-2025-04-05 10:14:50,801 [INFO] Executing workflow step: build_csim
-2025-04-05 10:14:50,801 [INFO] Running agent hls_builder for step build_csim
-2025-04-05 10:14:50,802 [INFO] Agent hls_builder status: running
-2025-04-05 10:14:50,802 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-05 10:14:58,054 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-05 10:14:58,054 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-05 10:14:58,054 [WARNING] Build still failing after debug attempt 2/3
-2025-04-05 10:14:58,054 [INFO] Executing workflow step: debug_errors
-2025-04-05 10:14:58,054 [INFO] Running agent debug_assistant for step debug_errors
-2025-04-05 10:14:58,054 [INFO] Agent debug_assistant status: running
-2025-04-05 10:14:58,054 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.5-pro-exp-03-25
-2025-04-05 10:17:25,585 [INFO] Registered agent: code_generator
-2025-04-05 10:17:25,585 [INFO] Registered agent: debug_assistant
-2025-04-05 10:17:25,585 [INFO] Registered agent: makefile_generator
-2025-04-05 10:17:25,585 [INFO] Registered agent: hls_builder
-2025-04-05 10:17:25,585 [INFO] Workflow defined with 7 steps
-2025-04-05 10:17:25,585 [INFO] Starting workflow execution
-2025-04-05 10:17:25,585 [INFO] Executing workflow step: generate_code
-2025-04-05 10:17:25,585 [INFO] Running agent code_generator for step generate_code
-2025-04-05 10:17:25,585 [INFO] Agent code_generator status: running
-2025-04-05 10:17:25,585 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.5-pro-exp-03-25
-2025-04-05 10:18:41,689 [INFO] Agent code_generator status: success
-2025-04-05 10:18:41,690 [INFO] Executing workflow step: generate_makefile
-2025-04-05 10:18:41,690 [INFO] Running agent makefile_generator for step generate_makefile
-2025-04-05 10:18:41,690 [INFO] Agent makefile_generator status: running
-2025-04-05 10:18:41,690 [INFO] Generating Makefile for peakPicker in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
-2025-04-05 10:18:41,691 [INFO] Generated Makefile from template at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/Makefile
-2025-04-05 10:18:41,691 [INFO] Agent makefile_generator status: success
-2025-04-05 10:18:41,691 [INFO] Executing workflow step: build_csim
-2025-04-05 10:18:41,691 [INFO] Running agent hls_builder for step build_csim
-2025-04-05 10:18:41,691 [INFO] Agent hls_builder status: running
-2025-04-05 10:18:41,692 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-05 10:18:48,934 [ERROR] Agent hls_builder: Make failed with return code 2
-2025-04-05 10:18:48,934 [INFO] Agent hls_builder status: failed - Make failed with return code 2
-2025-04-05 10:18:48,934 [INFO] Starting debug cycle
-2025-04-05 10:18:48,934 [INFO] Executing workflow step: debug_errors
-2025-04-05 10:18:48,934 [INFO] Running agent debug_assistant for step debug_errors
-2025-04-05 10:18:48,934 [INFO] Agent debug_assistant status: running
-2025-04-05 10:18:48,934 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.5-pro-exp-03-25
-2025-04-05 10:20:20,573 [INFO] Agent debug_assistant status: success
-2025-04-05 10:20:20,573 [INFO] Executing workflow step: build_csim
-2025-04-05 10:20:20,573 [INFO] Running agent hls_builder for step build_csim
-2025-04-05 10:20:20,574 [INFO] Agent hls_builder status: running
-2025-04-05 10:20:20,574 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
-2025-04-05 10:20:27,806 [INFO] Agent hls_builder status: success
-2025-04-05 10:20:27,806 [INFO] Debug cycle completed successfully, continuing workflow
-2025-04-05 10:20:27,806 [INFO] Executing workflow step: build_csynth
-2025-04-05 10:20:27,806 [INFO] Running agent hls_builder for step build_csynth
-2025-04-05 10:20:27,807 [INFO] Agent hls_builder status: running
-2025-04-05 10:20:27,807 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csynth
-2025-04-05 10:20:42,888 [INFO] Agent hls_builder status: success
-2025-04-05 10:20:42,888 [INFO] Executing workflow step: build_cosim
-2025-04-05 10:20:42,888 [INFO] Running agent hls_builder for step build_cosim
-2025-04-05 10:20:42,888 [INFO] Agent hls_builder status: running
-2025-04-05 10:20:42,888 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make cosim
-2025-04-05 10:21:07,987 [INFO] Agent hls_builder status: success
-2025-04-05 10:21:07,987 [INFO] Executing workflow step: export_ip
-2025-04-05 10:21:07,987 [INFO] Running agent hls_builder for step export_ip
-2025-04-05 10:21:07,987 [INFO] Agent hls_builder status: running
-2025-04-05 10:21:07,988 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make export_ip
-2025-04-05 10:21:26,152 [INFO] Agent hls_builder status: success
-2025-04-05 10:21:26,152 [INFO] Workflow completed with status: success
-2025-04-05 10:21:26,152 [INFO] Agent workflow completed successfully
+2025-04-06 14:59:08,864 [INFO] Prompt manager initialized with directory: /home/jielei/Projects/UTS/llm-fpga-design/prompts
+2025-04-06 14:59:08,864 [INFO] Registered agent: code_generator
+2025-04-06 14:59:08,864 [INFO] Registered agent: debug_assistant
+2025-04-06 14:59:08,864 [INFO] Registered agent: makefile_generator
+2025-04-06 14:59:08,864 [INFO] Registered agent: performance_optimizer
+2025-04-06 14:59:08,864 [INFO] Registered agent: hls_builder
+2025-04-06 14:59:08,864 [INFO] Registered agent: documentation_generator
+2025-04-06 14:59:08,864 [INFO] Workflow defined with 9 steps
+2025-04-06 14:59:08,864 [INFO] Starting workflow execution
+2025-04-06 14:59:08,865 [INFO] Executing workflow step: generate_code
+2025-04-06 14:59:08,865 [INFO] Running agent code_generator for step generate_code
+2025-04-06 14:59:08,865 [INFO] Agent code_generator status: running
+2025-04-06 14:59:08,865 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.5-pro-exp-03-25
+2025-04-06 15:00:21,531 [INFO] Agent code_generator status: success
+2025-04-06 15:00:21,532 [INFO] Executing workflow step: generate_makefile
+2025-04-06 15:00:21,532 [INFO] Running agent makefile_generator for step generate_makefile
+2025-04-06 15:00:21,532 [INFO] Agent makefile_generator status: running
+2025-04-06 15:00:21,532 [INFO] Generating Makefile for peakPicker in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
+2025-04-06 15:00:21,532 [INFO] Generated Makefile from template at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/Makefile
+2025-04-06 15:00:21,532 [INFO] Agent makefile_generator status: success
+2025-04-06 15:00:21,532 [INFO] Executing workflow step: build_csim
+2025-04-06 15:00:21,532 [INFO] Running agent hls_builder for step build_csim
+2025-04-06 15:00:21,532 [INFO] Agent hls_builder status: running
+2025-04-06 15:00:21,533 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
+2025-04-06 15:00:28,586 [ERROR] Agent hls_builder: Make failed with return code 2
+2025-04-06 15:00:28,586 [INFO] Agent hls_builder status: failed - Make failed with return code 2
+2025-04-06 15:00:28,586 [INFO] Starting debug cycle
+2025-04-06 15:00:28,586 [INFO] Executing workflow step: debug_errors
+2025-04-06 15:00:28,586 [INFO] Running agent debug_assistant for step debug_errors
+2025-04-06 15:00:28,586 [INFO] Agent debug_assistant status: running
+2025-04-06 15:00:28,586 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.5-pro-exp-03-25
+2025-04-06 15:02:12,412 [INFO] Agent debug_assistant status: success
+2025-04-06 15:02:12,412 [INFO] Executing workflow step: build_csim
+2025-04-06 15:02:12,412 [INFO] Running agent hls_builder for step build_csim
+2025-04-06 15:02:12,412 [INFO] Agent hls_builder status: running
+2025-04-06 15:02:12,413 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
+2025-04-06 15:02:19,744 [INFO] Agent hls_builder status: success
+2025-04-06 15:02:19,744 [INFO] Debug cycle completed successfully, continuing workflow
+2025-04-06 15:02:19,744 [INFO] Executing workflow step: build_csynth
+2025-04-06 15:02:19,744 [INFO] Running agent hls_builder for step build_csynth
+2025-04-06 15:02:19,744 [INFO] Agent hls_builder status: running
+2025-04-06 15:02:19,744 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csynth
+2025-04-06 15:02:34,838 [INFO] Agent hls_builder status: success
+2025-04-06 15:02:34,839 [INFO] Executing workflow step: build_cosim
+2025-04-06 15:02:34,839 [INFO] Running agent hls_builder for step build_cosim
+2025-04-06 15:02:34,839 [INFO] Agent hls_builder status: running
+2025-04-06 15:02:34,839 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make cosim
+2025-04-06 15:03:00,392 [INFO] Agent hls_builder status: success
+2025-04-06 15:03:00,392 [INFO] Executing workflow step: export_ip
+2025-04-06 15:03:00,392 [INFO] Running agent hls_builder for step export_ip
+2025-04-06 15:03:00,392 [INFO] Agent hls_builder status: running
+2025-04-06 15:03:00,392 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make export_ip
+2025-04-06 15:03:18,971 [INFO] Agent hls_builder status: success
+2025-04-06 15:03:18,971 [INFO] Executing workflow step: build_impl
+2025-04-06 15:03:18,971 [INFO] Running agent hls_builder for step build_impl
+2025-04-06 15:03:18,972 [INFO] Agent hls_builder status: running
+2025-04-06 15:03:18,972 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make impl
+2025-04-06 15:06:56,841 [ERROR] Agent hls_builder: INFO: [Place 46-56] BUFG insertion identified 0 candidate nets. Inserted BUFG: 0, Replicated BUFG Driver: 0, Skipped due to Placement/Routing Conflicts: 0, Skipped due to Timing Degradation: 0, Skipped due to netlist editing failed: 0.
+Number of Failed Nets               = 616
+(Failed Nets is the sum of unrouted and partially routed nets)
+Number of Failed Nets               = 0
+(Failed Nets is the sum of unrouted and partially routed nets)
+2025-04-06 15:06:56,842 [INFO] Agent hls_builder status: failed - INFO: [Place 46-56] BUFG insertion identified 0 candidate nets. Inserted BUFG: 0, Replicated BUFG Driver: 0, Skipped due to Placement/Routing Conflicts: 0, Skipped due to Timing Degradation: 0, Skipped due to netlist editing failed: 0.
+Number of Failed Nets               = 616
+(Failed Nets is the sum of unrouted and partially routed nets)
+Number of Failed Nets               = 0
+(Failed Nets is the sum of unrouted and partially routed nets)
+2025-04-06 15:06:56,842 [INFO] Encountered error, running error handling: generate_documentation
+2025-04-06 15:06:56,842 [INFO] Executing workflow step: generate_documentation
+2025-04-06 15:06:56,842 [INFO] Running agent documentation_generator for step generate_documentation
+2025-04-06 15:06:56,842 [INFO] Agent documentation_generator status: running
+2025-04-06 15:06:56,842 [INFO] Analyzing performance reports...
+2025-04-06 15:06:57,128 [INFO] Analyzing LLM responses for insights...
+2025-04-06 15:06:57,128 [INFO] Analyzing code generation LLM response: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/llm_response.md
+2025-04-06 15:06:57,131 [INFO] Analyzing debug reports in: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/debug_reports
+2025-04-06 15:06:57,137 [INFO] Collecting workflow execution data...
+2025-04-06 15:06:57,137 [INFO] Generating documentation...
+2025-04-06 15:06:57,138 [INFO] Calling LLM with model gemini-2.5-pro-exp-03-25 to generate documentation...
+2025-04-06 15:10:16,909 [INFO] Agent documentation_generator status: success
+2025-04-06 15:10:16,910 [INFO] Workflow completed with status: success
+2025-04-06 15:10:16,910 [INFO] Agent workflow completed successfully
+2025-04-06 15:38:52,946 [INFO] Prompt manager initialized with directory: /home/jielei/Projects/UTS/llm-fpga-design/prompts
+2025-04-06 15:38:52,946 [INFO] Registered agent: code_generator
+2025-04-06 15:38:52,946 [INFO] Registered agent: debug_assistant
+2025-04-06 15:38:52,947 [INFO] Registered agent: makefile_generator
+2025-04-06 15:38:52,947 [INFO] Registered agent: performance_optimizer
+2025-04-06 15:38:52,947 [INFO] Registered agent: hls_builder
+2025-04-06 15:38:52,947 [INFO] Registered agent: documentation_generator
+2025-04-06 15:38:52,947 [INFO] Agent documentation_generator status: running
+2025-04-06 15:38:52,947 [INFO] Analyzing performance reports...
+2025-04-06 15:38:53,187 [INFO] Analyzing LLM responses for insights...
+2025-04-06 15:38:53,187 [INFO] Analyzing code generation LLM response: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/llm_response.md
+2025-04-06 15:38:53,190 [INFO] Analyzing debug reports in: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/debug_reports
+2025-04-06 15:38:53,196 [INFO] Collecting workflow execution data...
+2025-04-06 15:38:53,196 [INFO] Generating documentation...
+2025-04-06 15:38:53,197 [INFO] Calling LLM with model gemini-2.5-pro-exp-03-25 to generate documentation...
+2025-04-06 15:41:50,339 [INFO] Agent documentation_generator status: success

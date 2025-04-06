@@ -47,6 +47,8 @@ def parse_arguments():
     parser.add_argument('--model', type=str, default='gemini-2.5-pro-exp-03-25',
                         choices=['gemini-2.5-pro-exp-03-25', 'gemini-2.0-pro-exp', 'gemini-2.0-flash-thinking-exp', 'gpt-4', 'gpt-3.5-turbo', 'claude-sonnet'],
                         help='LLM model to use (default: gemini-2.0-pro-exp)')
+    parser.add_argument('--prompt_template', type=str,
+                        help='Path to the debug prompt template (optional)')
     return parser.parse_args()
 
 def read_file(file_path):
@@ -89,8 +91,266 @@ def extract_error_information(log_content):
         return "\n".join(lines[-20:])
     return log_content
 
-def create_debug_prompt(error_info, source_files_content):
+def categorize_error(error_info):
+    """Categorize the error for better documentation"""
+    categories = {
+        "memory": ["out of bounds", "segmentation fault", "memory access", "buffer overflow", "invalid pointer"],
+        "datatype": ["incompatible types", "cannot convert", "invalid conversion", "type mismatch"],
+        "syntax": ["expected", "missing", "undeclared", "not declared", "syntax error", "before"],
+        "interface": ["interface mismatch", "port", "incompatible interface", "input port", "output port"],
+        "simulation": ["simulation failed", "csim failed", "test bench", "verification failed", "result mismatch"],
+        "pragma": ["pragma", "directive", "unroll", "pipeline", "dataflow", "array_partition"],
+        "latency": ["timing", "latency", "cannot achieve", "II constraint"],
+        "resource": ["insufficient resources", "DSP", "BRAM", "LUT", "FF", "resource"]
+    }
+    
+    result = {"primary_category": "unknown", "all_categories": [], "details": {}}
+    
+    error_lower = error_info.lower()
+    
+    # Check each category
+    for category, keywords in categories.items():
+        for keyword in keywords:
+            if keyword in error_lower:
+                result["all_categories"].append(category)
+                # Only record details for categories we found
+                if category not in result["details"]:
+                    result["details"][category] = []
+                # Extract the specific line containing this keyword
+                for line in error_info.splitlines():
+                    if keyword in line.lower():
+                        if line not in result["details"][category]:
+                            result["details"][category].append(line)
+    
+    # Determine primary category (the one with most matches or first found)
+    if result["all_categories"]:
+        category_counts = {}
+        for category in result["all_categories"]:
+            if category not in category_counts:
+                category_counts[category] = 0
+            category_counts[category] += 1
+        
+        # Get category with highest count
+        result["primary_category"] = max(category_counts.items(), key=lambda x: x[1])[0]
+    
+    return result
+
+def get_debug_prompt_template():
+    """Get the debug prompt template from the prompt directory."""
+    script_dir = Path(__file__).parent
+    project_dir = script_dir.parent
+    prompt_dir = os.path.join(project_dir, "prompts")
+    
+    # Check for hls_debugging prompt template
+    template_path = os.path.join(prompt_dir, "hls_debugging.md")
+    if os.path.exists(template_path):
+        return read_file(template_path)
+    
+    # Fall back to a default template
+    return """# HLS Code Debugging Assistant
+
+## Task Description
+You are tasked with analyzing HLS C++ code that has encountered errors during compilation, simulation, or synthesis. You must identify the root causes of the errors and provide specific solutions.
+
+## Source Files
+The following HLS C++ source files have been provided:
+
+{{SOURCE_FILES}}
+
+## Error Log
+The following errors were encountered during the HLS process:
+
+{{ERROR_LOG}}
+
+## Debugging Process
+
+Please follow this structured approach to debug the code:
+
+1. **Error Analysis**
+   - Categorize errors (compilation, simulation, synthesis, etc.)
+   - Identify error patterns and relationships between multiple errors
+   - Determine if errors are syntax-related, interface-related, or algorithm-related
+
+2. **Root Cause Identification**
+   - Locate the specific code causing each error
+   - Analyze context surrounding the problematic code
+   - Identify patterns of misuse of HLS constructs or C++ language features
+   - Check for common HLS pitfalls:
+     - Unsupported C++ features in HLS
+     - Memory access pattern issues
+     - Data type incompatibilities
+     - Interface specification problems
+     - Pragma-related issues
+
+3. **Solution Development**
+   - Propose specific fixes for each identified issue
+   - Provide explanations for why the fixes will resolve the errors
+   - Include code snippets showing the corrections
+   - Address any potential side effects of the proposed changes
+
+4. **Verification Guidance**
+   - Suggest verification steps to ensure the fixes are correct
+   - Recommend additional tests if appropriate
+   - Provide guidance on preventing similar issues in the future
+
+## IMPORTANT: Response Format
+1. First, provide your analysis of the issue
+2. Then, clearly indicate the start of the corrected code with "### COMPLETE CORRECTED SOURCE CODE:"
+3. Provide the ENTIRE corrected source code file in a single code block, not just the changes
+4. If you have multiple files, provide each file in a separate code block
+5. Use the following format for code blocks:
+  - For function code file
+    **File: `{component}.cpp`**
+
+    ```cpp
+    // Your complete corrected code here
+    ```
+  - For header file
+    **File: `{component}.hpp`**
+
+    ```cpp
+    // Your complete corrected code here
+    ```
+  - For test bench file
+    **File: `{component}_tb.cpp`**
+    
+    ```cpp
+    // Your complete corrected code here
+    ```
+"""
+
+def update_debug_prompt_template(template, error_info, result_status):
+    """Update the debug prompt template with new information from this debugging session."""
+    script_dir = Path(__file__).parent
+    project_dir = script_dir.parent
+    prompt_dir = os.path.join(project_dir, "prompts")
+    template_path = os.path.join(prompt_dir, "hls_debugging.md")
+    
+    # Create prompts directory if it doesn't exist
+    os.makedirs(prompt_dir, exist_ok=True)
+    
+    # Create backup before updating
+    if os.path.exists(template_path):
+        backup_dir = os.path.join(prompt_dir, "backups")
+        os.makedirs(backup_dir, exist_ok=True)
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_path = os.path.join(backup_dir, f"hls_debugging_{timestamp}.md")
+        shutil.copy2(template_path, backup_path)
+    
+    # Extract error patterns to add to the template
+    error_patterns = []
+    common_errors = [
+        "array index out of bounds",
+        "incompatible types",
+        "undefined reference",
+        "undeclared identifier",
+        "segmentation fault",
+        "memory access violation",
+        "variable not initialized",
+        "precision loss",
+        "overflow",
+        "interface mismatch"
+    ]
+    
+    for err in common_errors:
+        if err.lower() in error_info.lower():
+            error_patterns.append(err)
+    
+    # Update the template content
+    updated_content = template
+    
+    # If success, add to BEST PRACTICES section
+    if result_status == "success":
+        if "## BEST PRACTICES" not in updated_content:
+            updated_content += "\n\n## BEST PRACTICES\n"
+        
+        # Find position to insert new practice
+        if "## BEST PRACTICES" in updated_content:
+            sections = updated_content.split("## BEST PRACTICES")
+            next_section_pos = sections[1].find("##")
+            
+            if next_section_pos > 0:
+                insert_pos = next_section_pos
+                practice_text = f"\n- Successfully resolved debugging issues on {datetime.datetime.now().strftime('%Y-%m-%d')}\n"
+                sections[1] = sections[1][:insert_pos] + practice_text + sections[1][insert_pos:]
+            else:
+                practice_text = f"\n- Successfully resolved debugging issues on {datetime.datetime.now().strftime('%Y-%m-%d')}\n"
+                sections[1] += practice_text
+                
+            updated_content = "## BEST PRACTICES".join(sections)
+    
+    # If error patterns found, add to COMMON PITFALLS section
+    elif error_patterns:
+        if "## COMMON PITFALLS" not in updated_content:
+            updated_content += "\n\n## COMMON PITFALLS\n"
+        
+        # Find position to insert new pitfalls
+        if "## COMMON PITFALLS" in updated_content:
+            sections = updated_content.split("## COMMON PITFALLS")
+            next_section_pos = sections[1].find("##")
+            
+            pitfalls_text = ""
+            for pattern in error_patterns:
+                pitfalls_text += f"\n- Watch for '{pattern}' errors which appeared in this debugging session\n"
+            
+            if next_section_pos > 0:
+                insert_pos = next_section_pos
+                sections[1] = sections[1][:insert_pos] + pitfalls_text + sections[1][insert_pos:]
+            else:
+                sections[1] += pitfalls_text
+                
+            updated_content = "## COMMON PITFALLS".join(sections)
+    
+    # Ensure the IMPORTANT section remains unchanged
+    important_section = """## IMPORTANT: Response Format
+1. First, provide your analysis of the issue
+2. Then, clearly indicate the start of the corrected code with "### COMPLETE CORRECTED SOURCE CODE:"
+3. Provide the ENTIRE corrected source code file in a single code block, not just the changes
+4. If you have multiple files, provide each file in a separate code block
+5. Use the following format for code blocks:
+  - For function code file
+    **File: `{component}.cpp`**
+
+    ```cpp
+    // Your complete corrected code here
+    ```
+  - For header file
+    **File: `{component}.hpp`**
+
+    ```cpp
+    // Your complete corrected code here
+    ```
+  - For test bench file
+    **File: `{component}_tb.cpp`**
+    
+    ```cpp
+    // Your complete corrected code here
+    ```"""
+    
+    # Check if the important section needs to be preserved/restored
+    if "## IMPORTANT: Response Format" in updated_content:
+        parts = updated_content.split("## IMPORTANT: Response Format")
+        first_part = parts[0]
+        # Find the next section after IMPORTANT
+        next_part_pos = parts[1].find("\n## ")
+        if next_part_pos > 0:
+            remaining_part = parts[1][next_part_pos:]
+            updated_content = first_part + important_section + remaining_part
+        else:
+            updated_content = first_part + important_section
+    
+    # Write the updated template
+    with open(template_path, 'w') as f:
+        f.write(updated_content)
+    
+    print(f"Updated debug prompt template with new information at: {template_path}")
+    return True
+
+def create_debug_prompt(error_info, source_files_content, template=None):
     """Create a well-structured debug prompt for the LLM."""
+    if template is None:
+        template = get_debug_prompt_template()
+    
     source_code_sections = []
     
     for file_path, content in source_files_content.items():
@@ -98,63 +358,13 @@ def create_debug_prompt(error_info, source_files_content):
     
     all_source_code = "\n".join(source_code_sections)
     
-    prompt = f"""
-# HLS C++ Debug Request
-
-## Error Information
-I'm encountering errors in my High-Level Synthesis (HLS) C++ implementation. 
-The C simulation has failed with the following errors:
-
-```
-{error_info}
-```
-
-## Source Code
-{all_source_code}
-
-## Assistance Needed
-Please help me debug these HLS C++ code files and its associated `*.hpp` header file by:
-
-1. Analyzing the error message to understand the root cause
-2. Examining the source code for issues related to the error
-3. Providing a complete corrected version of the source file
-After your analysis, provide the COMPLETE corrected source code file that resolves the issue.
-
-Focus on common HLS issues like:
-- Mismatches between test bench and implementation interfaces
-- Data type incompatibilities
-- Array indexing errors
-- Logical errors in the algorithm implementation
-- Pragma-related issues
-
-IMPORTANT: Response Format
-1. First, provide your analysis of the issue
-2. Then, clearly indicate the start of the corrected code with "### COMPLETE CORRECTED SOURCE CODE:"
-3. Provide the ENTIRE corrected source code file in a single code block, not just the changes
-4. If you have multiple files, provide each file in a separate code block
-5. Use the following format for code blocks:
-  - For function code file
-    **File: `peakPicker.cpp`**
-
-    ```cpp
-    // Your complete corrected code here
-    ```
-  - For header file
-    **File: `peakPicker.hpp`**
-
-    ```cpp
-    // Your complete corrected code here
-    ```
-  - For test bench file
-    **File: `peakPicker_tb.cpp`**
+    # Replace placeholders in the template
+    prompt = template.replace("{{SOURCE_FILES}}", all_source_code)
+    prompt = prompt.replace("{{ERROR_LOG}}", error_info)
     
-    ```cpp
-    // Your complete corrected code here
-    ```
-"""
     return prompt
 
-def query_gemini(prompt, model="gemini-2.0-pro-exp"):
+def query_gemini(prompt, model="gemini-2.5-pro-exp-03-25"):
     """Send a prompt to Google Gemini API and get the response."""
     if not GEMINI_API_KEY:
         print("Error: GEMINI_API_KEY environment variable not set.")
@@ -254,7 +464,7 @@ def query_llm(prompt, model="gemini"):
         sys.exit(1)
 
 def save_to_markdown(source_files, error_info, response, model_name):
-    """Save the debugging session to a markdown file."""
+    """Save the debugging session to a markdown file with enhanced error categorization."""
     # Create output filename based on first source file
     source_path = Path(source_files[0])
     output_dir = source_path.parent / "debug_reports"
@@ -266,25 +476,72 @@ def save_to_markdown(source_files, error_info, response, model_name):
     # Format the content
     files_list = "\n".join([f"- `{f}`" for f in source_files])
     
+    # Categorize the error
+    error_analysis = categorize_error(error_info)
+    primary_category = error_analysis["primary_category"].capitalize()
+    all_categories = ", ".join(error_analysis["all_categories"]).capitalize() if error_analysis["all_categories"] else "Unknown"
+    
+    # Extract bug/fix summary for documentation
+    bug_pattern = r"(?:The main bug|The error|The issue|The problem).*?(?=\n\n|\n##|\Z)"
+    bug_match = re.search(bug_pattern, response, re.DOTALL | re.IGNORECASE)
+    bug_summary = bug_match.group(0) if bug_match else "No concise bug description found."
+    
+    fix_pattern = r"(?:The fix|The solution|To fix this|The correction).*?(?=\n\n|\n##|\Z)"
+    fix_match = re.search(fix_pattern, response, re.DOTALL | re.IGNORECASE)
+    fix_summary = fix_match.group(0) if fix_match else "No concise fix description found."
+    
+    # Create detailed error section
+    error_details = ""
+    for category, lines in error_analysis["details"].items():
+        error_details += f"### {category.capitalize()} Issues\n"
+        for line in lines:
+            error_details += f"- {line}\n"
+        error_details += "\n"
+    
     content = f"""# Debug Report
 
-## Error Information
+## Error Summary
+- **Primary Error Category**: {primary_category}
+- **All Categories Detected**: {all_categories}
+- **Timestamp**: {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
+## Bug Summary
+{bug_summary}
+
+## Fix Summary
+{fix_summary}
+
+## Full Error Information
 ```
 {error_info}
 ```
+
+{error_details}
 
 ## LLM Analysis and Suggestions ({model_name})
 {response}
 
 ## Source Files
 {files_list}
-
-Generated on: {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 """
     
     # Write to file
     with open(output_file, 'w') as f:
         f.write(content)
+    
+    # Also save a JSON file with structured error information for better machine readability
+    json_file = output_dir / f"{source_path.stem}_debug_data_{timestamp}.json"
+    error_data = {
+        "timestamp": datetime.datetime.now().isoformat(),
+        "files": source_files,
+        "error_analysis": error_analysis,
+        "bug_summary": bug_summary,
+        "fix_summary": fix_summary,
+        "model_used": model_name
+    }
+    
+    with open(json_file, 'w') as f:
+        json.dump(error_data, f, indent=2)
     
     return output_file
 
@@ -529,8 +786,15 @@ def main():
     # Extract relevant error information
     error_info = extract_error_information(error_log)
     
+    # Get prompt template (from file or default)
+    prompt_template = None
+    if args.prompt_template and os.path.exists(args.prompt_template):
+        prompt_template = read_file(args.prompt_template)
+    else:
+        prompt_template = get_debug_prompt_template()
+    
     # Create the debug prompt with multiple source files
-    prompt = create_debug_prompt(error_info, source_files_content)
+    prompt = create_debug_prompt(error_info, source_files_content, prompt_template)
     
     print(f"Analyzing error using {args.model} and generating debug suggestions...")
     print("This may take a moment...")
@@ -553,11 +817,16 @@ def main():
     print("\n" + "="*80)
     
     # Automatically apply the suggested fixes if code blocks are found
+    result_status = "failed"
     if code_blocks:
         backup_files = edit_source_file(args.source_file, code_blocks)
         print(f"Changes applied automatically. Original sources backed up.")
+        result_status = "success"
     else:
         print("No specific code corrections found in the LLM response.")
+    
+    # Update the debug prompt template with the results of this session
+    update_debug_prompt_template(prompt_template, error_info, result_status)
     
     print("\nC simulation can now be re-run with the updated source files.")
     print("="*80 + "\n")
