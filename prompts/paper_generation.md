@@ -258,7 +258,4 @@ The following are examples of different types of tables/charts for performance d
 Your paper should contribute to the academic discourse on AI-assisted hardware design while presenting concrete technical achievements and insights.
 
 ## BEST PRACTICES
-
-- Successfully generated documentation on 2025-04-06
-- Successfully generated documentation on 2025-04-06
 - Successfully generated documentation on 2025-04-06

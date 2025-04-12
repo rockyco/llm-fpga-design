@@ -256,7 +256,14 @@ def extract_performance_data(metrics):
     # Extract timing data
     if "timing" in metrics and metrics["timing"]:
         for impl, timing in metrics["timing"].items():
-            data["timing"][impl] = timing
+            # Format MHz values with two decimal places and suffix
+            formatted_timing = {}
+            for key, value in timing.items():
+                if "_MHz" in key and isinstance(value, (int, float)):
+                    formatted_timing[key] = f"{value:.2f} MHz"
+                else:
+                    formatted_timing[key] = value
+            data["timing"][impl] = formatted_timing
     
     # Extract latency data
     if "latency" in metrics and metrics["latency"]:
@@ -265,7 +272,7 @@ def extract_performance_data(metrics):
     
     return data
 
-# New function to generate Mermaid diagram examples
+# Update the function to generate Mermaid diagram examples with proper escaping
 def generate_diagram_examples():
     """Generate example Mermaid diagrams to include in prompts."""
     examples = {
@@ -342,6 +349,34 @@ def generate_chart_examples():
     }
     
     return examples
+
+def get_debug_prompt_template():
+    """Load a debug prompt template or return a default one."""
+    # Try to find template in standard locations
+    script_dir = Path(__file__).parent
+    project_dir = script_dir.parent
+    template_file = os.path.join(project_dir, "prompts", "debug_template.md")
+    
+    # Check if template exists, otherwise return a default template
+    if os.path.exists(template_file):
+        with open(template_file, 'r') as f:
+            return f.read()
+    
+    # Default debug template if file not found
+    return """# Debug Assistance Request
+
+## Error Log
+{{ERROR_LOG}}
+
+## Source Files
+{{SOURCE_FILES}}
+
+Please analyze the error log and source files to identify the issue.
+Provide:
+1. Root cause of the error
+2. Suggested fix with code example
+3. Explanation of the fix
+"""
 
 def extract_design_insights(prompt):
     """Extract design insights from the prompt to enhance documentation."""
@@ -458,6 +493,62 @@ def generate_documentation(prompt_file, output_dir, model="gemini-2.5-pro-exp-03
         design_insights = extract_design_insights(base_prompt)
         logger.info(f"Extracted {sum(len(v) for v in design_insights.values())} design insights from LLM responses")
         
+        # Extract performance metrics for visualization if available
+        performance_data = {}
+        try:
+            # Look for metrics section in the prompt
+            metrics_match = re.search(r"## Performance Metrics\s*\n(.*?)(?:\n##|\Z)", base_prompt, re.DOTALL)
+            if metrics_match:
+                metrics_text = metrics_match.group(1)
+                # Try to parse metrics into a dictionary (simplified version)
+                metrics = {}
+                for section in ["resources", "timing", "latency"]:
+                    section_match = re.search(f"### {section.capitalize()}.*?\n(.*?)(?:\n###|\Z)", metrics_text, re.DOTALL, re.IGNORECASE)
+                    if section_match:
+                        metrics[section] = {}
+                        lines = section_match.group(1).strip().split('\n')
+                        for line in lines:
+                            if line.startswith('-') and ':' in line:
+                                parts = line.strip('- ').split(':')
+                                if len(parts) >= 2:
+                                    impl = parts[0].strip()
+                                    metrics[section][impl] = {}
+                                    values = ':'.join(parts[1:]).split(',')
+                                    for val in values:
+                                        if ':' in val:
+                                            k, v = val.split(':', 1)
+                                            metrics[section][impl][k.strip()] = v.strip()
+                
+                # Now extract structured performance data for visualization
+                if metrics:
+                    performance_data = extract_performance_data(metrics)
+                    
+                    # Format metrics for inclusion in documentation
+                    formatted_metrics = format_metrics_as_text(metrics)
+                    logger.info(f"Formatted performance metrics for documentation")
+                    
+                    # Check if performance metrics sections exist in base_prompt
+                    metrics_section_match = re.search(r"## Performance Metrics\s*\n", base_prompt)
+                    
+                    if metrics_section_match:
+                        # If Performance Metrics section exists, replace its subsections
+                        # Find where the section starts
+                        section_start = metrics_section_match.end()
+                        
+                        # Find where the section ends (next ## heading or end of text)
+                        next_section_match = re.search(r"\n##\s", base_prompt[section_start:])
+                        section_end = section_start + (next_section_match.start() if next_section_match else len(base_prompt[section_start:]))
+                        
+                        # Replace the content of the Performance Metrics section
+                        base_prompt = base_prompt[:section_start] + formatted_metrics + base_prompt[section_end:]
+                    else:
+                        # No Performance Metrics section exists, append it
+                        base_prompt += f"\n\n## Performance Metrics\n{formatted_metrics}"
+                        
+                    logger.info(f"Extracted performance data for visualization: {len(performance_data)} categories")
+        except Exception as e:
+            logger.warning(f"Error extracting performance data: {e}")
+        
         results = {}
         
         # Generate each requested format
@@ -497,6 +588,10 @@ def generate_documentation(prompt_file, output_dir, model="gemini-2.5-pro-exp-03
                     perf_match = re.search(r"## Performance Metrics\n(.*?)(?:\n##|\Z)", base_prompt, re.DOTALL)
                     if perf_match:
                         data["performance_metrics"] = perf_match.group(1).strip()
+                    
+                    # Add formatted performance data for visualization
+                    if performance_data:
+                        data["performance_data"] = json.dumps(performance_data)
                     
                     # Extract errors
                     errors_match = re.search(r"### Errors Encountered\n(.*?)(?:\n###|\Z)", base_prompt, re.DOTALL)
@@ -666,3 +761,159 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+def format_metrics_as_text(metrics):
+    """Format metrics dictionary as readable text"""
+    perf_text = ""
+    
+    # Format resource utilization
+    if "resources" in metrics and metrics["resources"]:
+        perf_text += "### Resource Utilization\n"
+        for impl, resources in metrics["resources"].items():
+            perf_text += f"- **{impl}**: "
+            for res, val in resources.items():
+                perf_text += f"{res}: {val}, "
+            perf_text = perf_text.rstrip(", ") + "\n"
+    
+    # Format timing information - Enhanced to highlight importance
+    if "timing" in metrics and metrics["timing"]:
+        perf_text += "\n### Timing (CRITICAL PERFORMANCE METRIC)\n"
+        perf_text += "The timing metrics below show clock period and frequency information, which are critical for understanding performance constraints and throughput capabilities.\n\n"
+        
+        # Create a table for better visualization in both README and paper
+        perf_text += "| Implementation | Period (ns) | Frequency (MHz) | Timing Margin |\n"
+        perf_text += "|----------------|------------|----------------|---------------|\n"
+        
+        for impl, timing in metrics["timing"].items():
+            # Get target, post-synthesis and post-route timing info if available
+            target = timing.get("Target", "-")
+            if not isinstance(target, (int, float)):
+                try:
+                    target = float(target)
+                except (ValueError, TypeError):
+                    target = "-"
+            
+            post_synth = timing.get("Post-Synthesis", "-")
+            if not isinstance(post_synth, (int, float)):
+                try:
+                    post_synth = float(post_synth)
+                except (ValueError, TypeError):
+                    post_synth = "-"
+            
+            post_route = timing.get("Post-Route", "-")
+            if not isinstance(post_route, (int, float)):
+                try:
+                    post_route = float(post_route)
+                except (ValueError, TypeError):
+                    post_route = "-"
+            
+            # Calculate margin if possible
+            margin = "-"
+            if isinstance(target, (int, float)) and isinstance(post_route, (int, float)):
+                margin = f"{target - post_route:.2f} ns"
+            
+            # Calculate frequency
+            freq = "-"
+            if isinstance(post_route, (int, float)) and post_route > 0:
+                freq = f"{1000.0/post_route:.2f}"
+            
+            perf_text += f"| {impl} | {post_route if post_route != '-' else '-'} | {freq} | {margin} |\n"
+        
+        perf_text += "\nNote: Timing is a critical performance metric that affects maximum clock frequency.\n"
+    
+    # Format latency information - Enhanced to highlight importance
+    if "latency" in metrics and metrics["latency"]:
+        perf_text += "\n### Latency (CRITICAL PERFORMANCE METRIC)\n"
+        perf_text += "The latency metrics below show the processing delay in clock cycles, which directly impacts overall system performance and throughput.\n\n"
+        
+        # Check if we have the new dictionary format or old single value
+        first_latency = next(iter(metrics["latency"].values()))
+        if isinstance(first_latency, dict):
+            # Create table header for the dictionary format - enhanced for clarity
+            perf_text += "| Implementation | Min Latency (cycles) | Max Latency (cycles) | Average Latency (cycles) | Throughput (samples/cycle) | Interval Min |\n"
+            perf_text += "|----------------|---------------------|---------------------|--------------------------|----------------------------|-------------|\n"
+            
+            for impl, latency in metrics["latency"].items():
+                min_val = latency.get('min', '-')
+                max_val = latency.get('max', '-')
+                avg_val = latency.get('average', '-')
+                interval_min = latency.get('interval_min', '-')
+                
+                # Handle throughput which might be a float
+                throughput = latency.get('throughput', '-')
+                if throughput != '-':
+                    try:
+                        if isinstance(throughput, str):
+                            throughput = float(throughput)
+                        throughput_str = f"{throughput:.6f}"
+                    except (ValueError, TypeError):
+                        throughput_str = throughput
+                else:
+                    throughput_str = "-"
+                
+                perf_text += f"| {impl} | {min_val} | {max_val} | {avg_val} | {throughput_str} | {interval_min} |\n"
+        else:
+            # Simple table for the old format
+            perf_text += "| Implementation | Latency (cycles) | Estimated Time @ Target Freq |\n"
+            perf_text += "|----------------|------------------|------------------------------|\n"
+            
+            for impl, latency in metrics["latency"].items():
+                # Try to estimate actual time if we have timing info
+                time_estimate = "-"
+                if "timing" in metrics and impl in metrics["timing"]:
+                    target_freq = metrics["timing"][impl].get("Target_MHz", None)
+                    if target_freq:
+                        # Extract numeric value from string if needed
+                        if isinstance(target_freq, str) and "MHz" in target_freq:
+                            try:
+                                freq_val = float(target_freq.split()[0])
+                                time_ns = (latency / freq_val) * 1000
+                                time_estimate = f"{time_ns:.2f} ns"
+                            except (ValueError, TypeError):
+                                pass
+                        elif isinstance(target_freq, (int, float)) and target_freq > 0:
+                            time_ns = (latency / target_freq) * 1000
+                            time_estimate = f"{time_ns:.2f} ns"
+                
+                perf_text += f"| {impl} | {latency} | {time_estimate} |\n"
+        
+        perf_text += "\nNote: Latency is a key performance metric that determines how quickly results can be produced.\n"
+        perf_text += "Lower latency values generally indicate better performance, while throughput indicates how many operations can be processed per cycle.\n"
+    
+    return perf_text
+
+def create_documentation_prompt(workflow_data, metrics, component_dir, context, output_format, llm_insights=None):
+    """Create a detailed prompt for the LLM to generate documentation"""
+    # ...existing code...
+    
+    # Generate performance metrics text directly from metrics object
+    if metrics and (not isinstance(metrics, dict) or "error" not in metrics):
+        perf_text = format_metrics_as_text(metrics)
+        
+        # Add explicit instructions for timing and latency metrics
+        perf_text += "\n## IMPORTANT: PERFORMANCE METRICS REQUIREMENTS\n"
+        perf_text += "When creating documentation, you MUST include detailed sections on the following performance metrics:\n\n"
+        
+        perf_text += "1. **Timing Metrics**:\n"
+        perf_text += "   - Include clock period (ns) and frequency (MHz)\n"
+        perf_text += "   - Discuss timing constraints and their implications\n"
+        perf_text += "   - Analyze how timing affects overall system performance\n"
+        perf_text += "   - Compare target vs. achieved timing if available\n\n"
+        
+        perf_text += "2. **Latency Metrics**:\n"
+        perf_text += "   - Report latency in clock cycles for various operations\n"
+        perf_text += "   - Calculate time-based latency using frequency information\n"
+        perf_text += "   - Discuss throughput and its relationship to latency\n"
+        perf_text += "   - Analyze pipeline behavior and initiation intervals if applicable\n\n"
+        
+        perf_text += "3. **Performance Visualizations**:\n"
+        perf_text += "   - Create tables showing timing and latency measurements\n"
+        perf_text += "   - If multiple implementations exist, include comparative charts\n"
+        perf_text += "   - Use Mermaid diagrams to illustrate performance characteristics\n"
+    else:
+        # Fallback if metrics are not available
+        perf_text = "No performance metrics are available."
+    
+    # ...existing code...
+
+# ...existing code...

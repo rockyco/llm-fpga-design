@@ -65,10 +65,10 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    A[Host System] --> B[Driver]
-    B --> C[{component_name}]
-    C --> D[Memory]
-    C --> E[Other IP Cores]
+    A["Host System"] --> B["Driver"]
+    B --> C["{component_name}"]
+    C --> D["Memory"]
+    C --> E["Other IP Cores"]
 ```
 
 ### 5. Performance Analysis
@@ -79,14 +79,29 @@ flowchart LR
 
 **Performance Visualization**: Include resource utilization tables and charts:
 
-```
 | Resource | Utilization | Available | Utilization % |
 |----------|-------------|-----------|---------------|
 | LUT      | X           | X_total   | X_percent     |
 | FF       | Y           | Y_total   | Y_percent     |
 | DSP      | Z           | Z_total   | Z_percent     |
 | BRAM     | W           | W_total   | W_percent     |
-```
+
+
+Include performance metrics (Timing & Latency) in well-formatted tables:
+
+## Timing
+
+| Implementation | Target (ns) | Target (MHz) | Post-Synthesis (ns) | Post-Synthesis (MHz) | Post-Route (ns) | Post-Route (MHz) |
+|---------------|------------|-------------|-------------------|---------------------|----------------|----------------|
+| solution1 | 3.90 | 256.00 | u.uu | vvv.vv | x.xx | yyy.yy |
+
+## Latency
+
+| Implementation | Min (cycles) | Max (cycles) | Average (cycles) | Throughput (samples/cycle) |
+|---------------|-------------|-------------|-----------------|-----------------------------|
+| solution1 | X | Y | - | - |
+
+
 
 ### 6. Verification
 - Test methodology

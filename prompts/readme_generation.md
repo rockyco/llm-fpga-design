@@ -67,14 +67,34 @@ flowchart LR
 
 **Performance Visualization**: Present performance metrics in clear tables and include a state diagram if applicable. Example:
 
-```
 | Metric         | Value    | Unit       |
 |----------------|----------|------------|
 | Latency        | X        | cycles     |
 | Clock Period   | Y        | ns         |
 | Throughput     | Z        | items/cycle|
 | Resource Usage | See table below |     |
-```
+
+## Resource Utilization
+
+| Resource | Utilization | Available | Utilization % |
+|----------|-------------|-----------|---------------|
+| LUT      | X           | X_total   | X_percent     |
+| FF       | Y           | Y_total   | Y_percent     |
+| DSP      | Z           | Z_total   | Z_percent     |
+| BRAM     | W           | W_total   | W_percent     |
+
+## Timing
+
+| Implementation | Target (ns) | Target (MHz) | Post-Synthesis (ns) | Post-Synthesis (MHz) | Post-Route (ns) | Post-Route (MHz) |
+|---------------|------------|-------------|-------------------|---------------------|----------------|----------------|
+| solution1 | 3.90 | 256.00 | u.uu | vvv.vv | x.xx | yyy.yy |
+
+## Latency
+
+| Implementation | Min (cycles) | Max (cycles) | Average (cycles) | Throughput (samples/cycle) |
+|---------------|-------------|-------------|-----------------|-----------------------------|
+| solution1 | X | Y | - | - |
+
 
 For state machines, use:
 
@@ -184,6 +204,12 @@ Your README should serve as both a technical reference and a guide for someone w
 
 ## BEST PRACTICES
 
+- Successfully generated documentation on 2025-04-06
+- Successfully generated documentation on 2025-04-06
+- Successfully generated documentation on 2025-04-06
+- Successfully generated documentation on 2025-04-06
+- Successfully generated documentation on 2025-04-06
+- Successfully generated documentation on 2025-04-06
 - Successfully generated documentation on 2025-04-06
 - Successfully generated documentation on 2025-04-06
 - Successfully generated documentation on 2025-04-06
