@@ -5,6 +5,7 @@
       "args": {
         "matlab_file": ["<MATLAB_FILE>"],
         "prompt": "<PROMPT_FILE>",
+        "prompt_name": "hls_generation",
         "output_dir": "<OUTPUT_DIR>",
         "model": "gemini-2.5-pro-exp-03-25",
         "timeout": 600
@@ -58,8 +59,34 @@
       "work_dir": "<COMPONENT_DIR>",
       "target": "csynth"
     },
-    "next": "build_cosim",
+    "next": {
+      "context.get('optimize', False) == True": "optimize_code",
+      "default": "build_cosim"
+    },
     "on_error": "stop"
+  },
+  "optimize_code": {
+    "agent": "performance_optimizer",
+    "context": {
+      "args": {
+        "source_dir": "<COMPONENT_DIR>",
+        "prompt_name": "performance_optimization",
+        "model": "gemini-2.5-pro-exp-03-25",
+        "primary_goal": "Reduce latency by at least 20%",
+        "secondary_goal": "Maintain resource utilization"
+      }
+    },
+    "next": "build_csynth_optimized",
+    "on_error": "build_cosim"
+  },
+  "build_csynth_optimized": {
+    "agent": "hls_builder",
+    "context": {
+      "work_dir": "<COMPONENT_DIR>",
+      "target": "csynth"
+    },
+    "next": "build_cosim",
+    "on_error": "build_cosim"
   },
   "build_cosim": {
     "agent": "hls_builder",
@@ -75,6 +102,26 @@
     "context": {
       "work_dir": "<COMPONENT_DIR>",
       "target": "export_ip"
+    },
+    "next": "build_impl",
+    "on_error": "build_impl"
+  },
+  "build_impl": {
+    "agent": "hls_builder",
+    "context": {
+      "work_dir": "<COMPONENT_DIR>",
+      "target": "impl"
+    },
+    "next": "generate_documentation",
+    "on_error": "generate_documentation"
+  },
+  "generate_documentation": {
+    "agent": "documentation_generator",
+    "context": {
+      "component_dir": "<COMPONENT_DIR>",
+      "component": "<COMPONENT>",
+      "output_format": ["readme", "paper"],
+      "model": "gemini-2.5-pro-exp-03-25"
     },
     "on_error": "stop"
   }

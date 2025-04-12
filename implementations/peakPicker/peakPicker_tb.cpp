@@ -1,223 +1,206 @@
 /* AUTO-EDITED BY DEBUG ASSISTANT */
+#include "peakPicker.hpp"
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
-#include <cmath>    // For fabs
+#include <cmath>    // For std::abs
 #include <limits>   // For numeric_limits
-#include <iomanip>  // For std::setw, std::fixed, std::setprecision
+#include <iomanip>  // For std::setprecision
 
-#include "peakPicker.hpp" // Include the header for the DUT
+// Define input/output file names
+const std::string XCORR_INPUT_FILE = "pssCorrMagSq_3_in.txt"; // Matches MATLAB TB
+const std::string THRESHOLD_INPUT_FILE = "threshold_in.txt"; // Matches MATLAB TB
+const std::string REF_OUTPUT_FILE = "locations_3_ref.txt";   // Matches MATLAB TB
+// const std::string REF_OUTPUT_FILE = "peakLocs_out.txt"; // Alternative reference file name
 
-//--------------------------------------------------------------------------
-// Testbench Constants
-//--------------------------------------------------------------------------
-const std::string XCORR_INPUT_FILE = "pssCorrMagSq_3_in.txt";
-const std::string THRESHOLD_INPUT_FILE = "threshold_in.txt";
-const std::string LOCATIONS_REF_FILE = "locations_3_ref.txt";
-const std::string LOCATIONS_OUT_FILE = "peakLocs_out.txt"; // Matches MATLAB tb output name
-
-//--------------------------------------------------------------------------
-// Helper Functions for File I/O
-//--------------------------------------------------------------------------
-
-// Reads floating-point data from a file into a vector
-bool readData(const std::string& filename, std::vector<double>& data) {
-    std::ifstream ifs(filename);
-    if (!ifs.is_open()) {
-        std::cerr << "ERROR: Could not open file: " << filename << std::endl;
+// Function to read data from a file into a vector of doubles
+bool readDataFile(const std::string& filename, std::vector<double>& data) {
+    std::ifstream infile(filename);
+    if (!infile.is_open()) {
+        std::cerr << "Error: Could not open file: " << filename << std::endl;
         return false;
     }
-    double val;
-    while (ifs >> val) {
-        data.push_back(val);
+    double value;
+    while (infile >> value) {
+        data.push_back(value);
     }
-    if (ifs.bad()) {
-        std::cerr << "ERROR: Error reading file: " << filename << std::endl;
+    // Check for read errors (e.g., non-numeric data) after the loop
+    if (infile.bad()) {
+        std::cerr << "Error: Failed reading data from file: " << filename << std::endl;
+        infile.close();
         return false;
     }
-    ifs.close();
-    std::cout << "INFO: Read " << data.size() << " values from " << filename << std::endl;
-    return !data.empty(); // Consider empty file an error? Yes for this TB.
-}
-
-// Reads integer data from a file into a vector
-bool readIntData(const std::string& filename, std::vector<int>& data) {
-    std::ifstream ifs(filename);
-    if (!ifs.is_open()) {
-        std::cerr << "ERROR: Could not open file: " << filename << std::endl;
-        return false;
+    // Check if EOF was reached OR if a formatting error stopped the loop early
+    // infile.fail() is true if >> failed (e.g., bad format), but not for EOF
+    // infile.eof() is true if >> tried to read past EOF
+    if (!infile.eof() && infile.fail()) {
+         std::cerr << "Warning: Input format error suspected in file: " << filename << std::endl;
+         // Continue, but be aware data might be incomplete
     }
-    int val;
-    // Handle potential empty reference file (no peaks found)
-    while (ifs >> val) {
-        data.push_back(val);
+    infile.close();
+    if (data.empty() && !infile.eof()) { // Check if file was opened but no data read
+       std::cerr << "Warning: No data read from file (or file empty): " << filename << std::endl;
     }
-     if (ifs.bad() && !ifs.eof()) { // Check for read errors, ignore EOF
-        std::cerr << "ERROR: Error reading file: " << filename << std::endl;
-        return false;
-    }
-    ifs.close();
-    std::cout << "INFO: Read " << data.size() << " integer values from " << filename << std::endl;
-    // Allow empty reference file (0 peaks)
+    std::cout << "Read " << data.size() << " values from " << filename << std::endl;
     return true;
 }
 
-// Writes integer data from a vector to a file
-bool writeIntData(const std::string& filename, const std::vector<LocationType>& data) {
-    std::ofstream ofs(filename);
-    if (!ofs.is_open()) {
-        std::cerr << "ERROR: Could not open file for writing: " << filename << std::endl;
+// Function to read integer data (locations) from a file
+bool readIntDataFile(const std::string& filename, std::vector<int>& data) {
+    std::ifstream infile(filename);
+    if (!infile.is_open()) {
+        std::cerr << "Error: Could not open file: " << filename << std::endl;
         return false;
     }
-    // Write one value per line, matching MATLAB writematrix default for vectors
-    for (const auto& val : data) {
-        ofs << val << std::endl;
+    int value;
+    while (infile >> value) {
+        data.push_back(value);
     }
-    if (ofs.bad()) {
-        std::cerr << "ERROR: Error writing to file: " << filename << std::endl;
+     // Check for read errors (e.g., non-numeric data) after the loop
+    if (infile.bad()) {
+        std::cerr << "Error: Failed reading data from file: " << filename << std::endl;
+        infile.close();
         return false;
     }
-    ofs.close();
-    std::cout << "INFO: Wrote " << data.size() << " integer values to " << filename << std::endl;
+    // Check if EOF was reached OR if a formatting error stopped the loop early
+    if (!infile.eof() && infile.fail()) {
+         std::cerr << "Warning: Input format error suspected in file: " << filename << std::endl;
+         // Continue, but be aware data might be incomplete
+    }
+    infile.close();
+     if (data.empty() && !infile.eof()) { // Check if file was opened but no data read
+       std::cerr << "Warning: No data read from file (or file empty): " << filename << std::endl;
+    }
+    std::cout << "Read " << data.size() << " values from " << filename << std::endl;
     return true;
 }
 
 
-//--------------------------------------------------------------------------
-// Main Testbench Function
-//--------------------------------------------------------------------------
 int main() {
-    std::cout << "INFO: Starting Peak Picker HLS C++ Testbench..." << std::endl;
+    std::cout << "--- Starting Peak Picker Testbench ---" << std::endl;
 
-    // --- Input Data Reading ---
-    std::vector<double> xcorrInputDouble;
-    std::vector<double> thresholdInputDouble;
-    std::vector<int>    locationsRef;
+    // --- Data Loading ---
+    std::vector<double> xcorrVec, thresholdVec;
+    std::vector<int> refLocsVec; // Use int for reference locations from file
 
-    if (!readData(XCORR_INPUT_FILE, xcorrInputDouble)) return 1;
-    if (!readData(THRESHOLD_INPUT_FILE, thresholdInputDouble)) return 1;
-    if (!readIntData(LOCATIONS_REF_FILE, locationsRef)) return 1;
+    std::cout << "Loading input data..." << std::endl;
+    if (!readDataFile(XCORR_INPUT_FILE, xcorrVec)) return 1;
+    if (!readDataFile(THRESHOLD_INPUT_FILE, thresholdVec)) return 1;
 
-    // --- Input Data Validation ---
-    if (xcorrInputDouble.size() != thresholdInputDouble.size()) {
-        std::cerr << "ERROR: Input xcorr (" << xcorrInputDouble.size()
-                  << ") and threshold (" << thresholdInputDouble.size()
-                  << ") vectors must have the same size." << std::endl;
+    std::cout << "Loading reference output data..." << std::endl;
+    // Assuming reference file contains 1-based indices from MATLAB
+    if (!readIntDataFile(REF_OUTPUT_FILE, refLocsVec)) return 1;
+
+    // Basic input validation
+    if (xcorrVec.size() != thresholdVec.size()) {
+        std::cerr << "Error: Input xcorr size (" << xcorrVec.size()
+                  << ") does not match threshold size (" << thresholdVec.size() << ")" << std::endl;
         return 1;
     }
-    if (xcorrInputDouble.empty()) {
-         std::cerr << "ERROR: Input data files are empty or could not be read." << std::endl;
+    if (xcorrVec.empty()) {
+         std::cerr << "Error: Input data vectors are empty (or failed to load)." << std::endl;
          return 1;
     }
 
-    int numSamples = xcorrInputDouble.size();
-    std::cout << "INFO: Number of samples to process: " << numSamples << std::endl;
+    int numSamples = xcorrVec.size();
+    std::cout << "Number of samples to process: " << numSamples << std::endl;
 
-    // --- Convert Reference Locations (Potential 1-based to 0-based) ---
-    // Assuming the reference file was generated by MATLAB (1-based indexing)
-    // and the HLS DUT produces 0-based indices.
-    // If the reference file *already* contains 0-based indices, comment out this block.
-    std::cout << "INFO: Converting reference locations from assumed 1-based (e.g., MATLAB) to 0-based (C++) for comparison." << std::endl;
-    for (int& loc : locationsRef) {
-        loc = loc - 1; // Convert 1-based index to 0-based index
-        if (loc < 0) {
-             std::cerr << "ERROR: Found invalid negative location (" << loc + 1 << " in ref file) after 1-based to 0-based conversion." << std::endl;
-             return 1; // Error out if conversion results in invalid index
-        }
-    }
-    std::cout << "INFO: Reference locations converted to 0-based." << std::endl;
+    // --- Stream Preparation ---
+    hls::stream<Data_t> xcorrStream("xcorrStream");
+    hls::stream<Data_t> thresholdStream("thresholdStream");
+    hls::stream<Index_t> locationStream("locationStream");
 
-
-    // --- HLS Stream Preparation ---
-    XcorrStream xcorrStream("xcorrStream");
-    ThresholdStream thresholdStream("thresholdStream");
-    LocationStream locationStream("locationStream");
-    std::vector<LocationType> locationsHLS; // To store DUT output
-
-    // --- Populate Input Streams ---
-    std::cout << "INFO: Populating input streams..." << std::endl;
+    std::cout << "Populating input streams..." << std::endl;
     for (int i = 0; i < numSamples; ++i) {
-        // Convert double input to fixed-point DataType for the DUT
-        DataType xcorrFixed = xcorrInputDouble[i];
-        DataType thresholdFixed = thresholdInputDouble[i];
-        xcorrStream.write(xcorrFixed);
-        thresholdStream.write(thresholdFixed);
+        // Convert double to fixed-point Data_t
+        // Add checks here if concerned about out-of-range conversions, though
+        // ap_fixed usually handles this via saturation or wrapping based on config.
+        xcorrStream.write(static_cast<Data_t>(xcorrVec[i]));
+        thresholdStream.write(static_cast<Data_t>(thresholdVec[i]));
     }
-    std::cout << "INFO: Input streams populated." << std::endl;
+    std::cout << "Input streams populated." << std::endl;
 
-    // --- Execute the DUT (Device Under Test) ---
-    std::cout << "INFO: Executing peakPicker DUT..." << std::endl;
-    peakPicker(xcorrStream, thresholdStream, numSamples, locationStream);
-    std::cout << "INFO: DUT execution finished." << std::endl;
+    // --- Call the DUT (Device Under Test) ---
+    std::cout << "Calling HLS peakPicker function..." << std::endl;
+    peakPicker(xcorrStream, thresholdStream, locationStream, numSamples);
+    std::cout << "HLS peakPicker function finished." << std::endl;
 
-    // --- Collect Output Stream ---
-    std::cout << "INFO: Collecting results from output stream..." << std::endl;
+    // --- Collect Results ---
+    std::vector<Index_t> actualLocsVec; // Store results from DUT (0-based)
+    std::cout << "Collecting results from output stream..." << std::endl;
     while (!locationStream.empty()) {
-        LocationType loc;
-        locationStream.read(loc);
-        locationsHLS.push_back(loc);
+        actualLocsVec.push_back(locationStream.read());
     }
-    std::cout << "INFO: Collected " << locationsHLS.size() << " peak locations from HLS DUT." << std::endl;
-
-    // --- Write HLS Output to File ---
-    if (!writeIntData(LOCATIONS_OUT_FILE, locationsHLS)) {
-        std::cerr << "ERROR: Failed to write HLS output locations to file." << std::endl;
-        // Continue to comparison if possible
-    }
+     std::cout << "Collected " << actualLocsVec.size() << " peak locations." << std::endl;
 
     // --- Verification ---
-    std::cout << "INFO: Comparing HLS results (0-based) with converted reference (0-based)..." << std::endl;
+    std::cout << "Comparing HLS results with reference..." << std::endl;
     bool match = true;
-    int errors = 0;
+    int errorCount = 0;
 
     // Compare number of peaks found
-    if (locationsHLS.size() != locationsRef.size()) {
-        std::cerr << "ERROR: Mismatch in number of peaks found!" << std::endl;
-        std::cerr << "  Reference (0-based): " << locationsRef.size() << std::endl;
-        std::cerr << "  HLS DUT (0-based):   " << locationsHLS.size() << std::endl;
+    if (actualLocsVec.size() != refLocsVec.size()) {
+        std::cerr << "Error: Mismatch in number of detected peaks!" << std::endl;
+        std::cerr << "  Expected: " << refLocsVec.size() << std::endl;
+        std::cerr << "  Actual:   " << actualLocsVec.size() << std::endl;
         match = false;
-        // Don't reset errors here, size mismatch is the primary error in this case
-        errors = 1; // Indicate at least one error
+        // Don't stop here, try comparing the elements we do have if sizes are different
+        // errorCount will increase significantly anyway.
     } else {
-        std::cout << "INFO: Number of peaks matches reference (" << locationsRef.size() << ")." << std::endl;
+        std::cout << "Number of peaks matches reference (" << refLocsVec.size() << ")." << std::endl;
     }
 
-    // Compare individual peak locations if sizes match (or compare up to the minimum size if they don't, to show mismatches)
-    int compareCount = std::min((int)locationsHLS.size(), (int)locationsRef.size()); // Cast to int for comparison
-    if (compareCount > 0 && errors == 0) { // Only compare elements if sizes matched initially
-        std::cout << "INFO: Comparing individual peak locations..." << std::endl;
-    }
+    // Compare actual peak locations element by element
+    size_t comparisonLimit = std::min(actualLocsVec.size(), refLocsVec.size());
+    for (size_t i = 0; i < comparisonLimit; ++i) {
+        // Convert DUT output (ap_uint<INDEX_W>) to int for comparison
+        int actualLoc = static_cast<int>(actualLocsVec[i]); // DUT output (0-based)
+        int refLoc = refLocsVec[i];                         // Reference file value (assumed 1-based)
 
-    for (int i = 0; i < compareCount; ++i) {
-        if (locationsHLS[i] != locationsRef[i]) {
-            if (errors == 0) { // Print header only on first value error
-                 std::cerr << "ERROR: Mismatch in peak locations:" << std::endl;
-                 std::cerr << std::setw(10) << "Index" << std::setw(20) << "HLS Output (0-based)" << std::setw(20) << "Reference (0-based)" << std::endl;
+        // --- MODIFIED COMPARISON ---
+        // Adjust the 1-based reference index to 0-based for comparison
+        int expectedLoc_0based = refLoc - 1;
+
+        if (actualLoc != expectedLoc_0based) {
+            if (errorCount < 20) { // Print more mismatches if they occur
+               std::cerr << "Mismatch at output index " << i << ":" << std::endl;
+               std::cerr << "  Expected (0-based): " << expectedLoc_0based << " (from ref file value " << refLoc << ")" << std::endl;
+               std::cerr << "  Actual (0-based):   " << actualLoc << std::endl;
+            } else if (errorCount == 20) {
+               std::cerr << "Further mismatches suppressed..." << std::endl;
             }
-            std::cerr << std::setw(10) << i
-                      << std::setw(20) << locationsHLS[i]
-                      << std::setw(20) << locationsRef[i] << std::endl;
             match = false;
-            errors++;
+            errorCount++;
         }
+        // --- END MODIFIED COMPARISON ---
     }
 
-    // --- Report Final Result ---
+     // Report if sizes mismatched even if no element mismatches were found within comparisonLimit
+     if (actualLocsVec.size() != refLocsVec.size()) {
+         match = false; // Ensure test fails if sizes differ
+         if (errorCount == 0) { // Only print this if no element mismatches were logged
+             std::cerr << "Mismatch due to differing number of peaks." << std::endl;
+         }
+     }
+
+     if (errorCount > 0) {
+         std::cerr << "Total mismatches found: " << errorCount << std::endl;
+     }
+
+
+    // --- Report Results ---
     if (match) {
         std::cout << "----------------------------------------" << std::endl;
-        std::cout << "INFO: Test PASSED!" << std::endl;
+        std::cout << "--- Test PASSED ---" << std::endl;
+        std::cout << "HLS implementation output matches the reference output (assuming 1-based reference indices)." << std::endl;
         std::cout << "----------------------------------------" << std::endl;
         return 0; // Success
     } else {
-        std::cerr << "----------------------------------------" << std::endl;
-        // Report includes size mismatch OR number of value mismatches
-        if (locationsHLS.size() != locationsRef.size()) {
-             std::cerr << "ERROR: Test FAILED! Mismatch in number of peaks found." << std::endl;
-        } else {
-             std::cerr << "ERROR: Test FAILED! Found " << errors << " mismatches in peak location values." << std::endl;
-        }
-        std::cerr << "----------------------------------------" << std::endl;
+        std::cout << "----------------------------------------" << std::endl;
+        std::cout << "--- Test FAILED ---" << std::endl;
+        std::cout << "HLS implementation output does NOT match the reference output." << std::endl;
+        std::cout << "----------------------------------------" << std::endl;
         return 1; // Failure
     }
 }
