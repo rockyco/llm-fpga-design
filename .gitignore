@@ -1,0 +1,18 @@
+.venv/
+.vscode/
+implementations/peakPicker/proj_peakPicker/
+implementations/peakPicker/*.md
+implementations/peakPicker/*.py
+implementations/peakPicker/*.log
+implementations/peakPicker/*.bak
+prompts/paper_generation.md
+prompts/readme_generation.md
+prompts/hls_generation.md
+prompts/backups/
+scripts/__pycache__/
+# scripts/agent_cli.py
+scripts/agent_framework.py
+# scripts/generate_documentation.py
+record/
+workflows/
+/*_log.txt
