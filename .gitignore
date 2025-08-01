@@ -13,6 +13,6 @@ scripts/__pycache__/
 # scripts/agent_cli.py
 # scripts/agent_framework.py
 # scripts/generate_documentation.py
-# record/
+record/
 # workflows/
 /*_log.txt
