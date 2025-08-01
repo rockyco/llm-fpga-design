@@ -1,0 +1,215 @@
+2025-04-06 14:59:08,864 [INFO] Prompt manager initialized with directory: /home/jielei/Projects/UTS/llm-fpga-design/prompts
+2025-04-06 14:59:08,864 [INFO] Registered agent: code_generator
+2025-04-06 14:59:08,864 [INFO] Registered agent: debug_assistant
+2025-04-06 14:59:08,864 [INFO] Registered agent: makefile_generator
+2025-04-06 14:59:08,864 [INFO] Registered agent: performance_optimizer
+2025-04-06 14:59:08,864 [INFO] Registered agent: hls_builder
+2025-04-06 14:59:08,864 [INFO] Registered agent: documentation_generator
+2025-04-06 14:59:08,864 [INFO] Workflow defined with 9 steps
+2025-04-06 14:59:08,864 [INFO] Starting workflow execution
+2025-04-06 14:59:08,865 [INFO] Executing workflow step: generate_code
+2025-04-06 14:59:08,865 [INFO] Running agent code_generator for step generate_code
+2025-04-06 14:59:08,865 [INFO] Agent code_generator status: running
+2025-04-06 14:59:08,865 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/generate_hls_code.py --matlab_file algorithms/peakPicker.m algorithms/peakPicker_tb.m --prompt /home/jielei/Projects/UTS/llm-fpga-design/prompts/hls_generation.md --output_dir /home/jielei/Projects/UTS/llm-fpga-design/implementations --model gemini-2.5-pro-exp-03-25
+2025-04-06 15:00:21,531 [INFO] Agent code_generator status: success
+2025-04-06 15:00:21,532 [INFO] Executing workflow step: generate_makefile
+2025-04-06 15:00:21,532 [INFO] Running agent makefile_generator for step generate_makefile
+2025-04-06 15:00:21,532 [INFO] Agent makefile_generator status: running
+2025-04-06 15:00:21,532 [INFO] Generating Makefile for peakPicker in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker
+2025-04-06 15:00:21,532 [INFO] Generated Makefile from template at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/Makefile
+2025-04-06 15:00:21,532 [INFO] Agent makefile_generator status: success
+2025-04-06 15:00:21,532 [INFO] Executing workflow step: build_csim
+2025-04-06 15:00:21,532 [INFO] Running agent hls_builder for step build_csim
+2025-04-06 15:00:21,532 [INFO] Agent hls_builder status: running
+2025-04-06 15:00:21,533 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
+2025-04-06 15:00:28,586 [ERROR] Agent hls_builder: Make failed with return code 2
+2025-04-06 15:00:28,586 [INFO] Agent hls_builder status: failed - Make failed with return code 2
+2025-04-06 15:00:28,586 [INFO] Starting debug cycle
+2025-04-06 15:00:28,586 [INFO] Executing workflow step: debug_errors
+2025-04-06 15:00:28,586 [INFO] Running agent debug_assistant for step debug_errors
+2025-04-06 15:00:28,586 [INFO] Agent debug_assistant status: running
+2025-04-06 15:00:28,586 [INFO] Running command: /home/jielei/Projects/UTS/llm-fpga-design/.venv/bin/python3 /home/jielei/Projects/UTS/llm-fpga-design/scripts/debug_assistant.py --error_log /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/proj_peakPicker/solution1/csim/report/peakPicker_csim.log --source_file /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.hpp /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker.cpp /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/peakPicker_tb.cpp --model gemini-2.5-pro-exp-03-25
+2025-04-06 15:02:12,412 [INFO] Agent debug_assistant status: success
+2025-04-06 15:02:12,412 [INFO] Executing workflow step: build_csim
+2025-04-06 15:02:12,412 [INFO] Running agent hls_builder for step build_csim
+2025-04-06 15:02:12,412 [INFO] Agent hls_builder status: running
+2025-04-06 15:02:12,413 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csim
+2025-04-06 15:02:19,744 [INFO] Agent hls_builder status: success
+2025-04-06 15:02:19,744 [INFO] Debug cycle completed successfully, continuing workflow
+2025-04-06 15:02:19,744 [INFO] Executing workflow step: build_csynth
+2025-04-06 15:02:19,744 [INFO] Running agent hls_builder for step build_csynth
+2025-04-06 15:02:19,744 [INFO] Agent hls_builder status: running
+2025-04-06 15:02:19,744 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make csynth
+2025-04-06 15:02:34,838 [INFO] Agent hls_builder status: success
+2025-04-06 15:02:34,839 [INFO] Executing workflow step: build_cosim
+2025-04-06 15:02:34,839 [INFO] Running agent hls_builder for step build_cosim
+2025-04-06 15:02:34,839 [INFO] Agent hls_builder status: running
+2025-04-06 15:02:34,839 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make cosim
+2025-04-06 15:03:00,392 [INFO] Agent hls_builder status: success
+2025-04-06 15:03:00,392 [INFO] Executing workflow step: export_ip
+2025-04-06 15:03:00,392 [INFO] Running agent hls_builder for step export_ip
+2025-04-06 15:03:00,392 [INFO] Agent hls_builder status: running
+2025-04-06 15:03:00,392 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make export_ip
+2025-04-06 15:03:18,971 [INFO] Agent hls_builder status: success
+2025-04-06 15:03:18,971 [INFO] Executing workflow step: build_impl
+2025-04-06 15:03:18,971 [INFO] Running agent hls_builder for step build_impl
+2025-04-06 15:03:18,972 [INFO] Agent hls_builder status: running
+2025-04-06 15:03:18,972 [INFO] Running make in /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker: make impl
+2025-04-06 15:06:56,841 [ERROR] Agent hls_builder: INFO: [Place 46-56] BUFG insertion identified 0 candidate nets. Inserted BUFG: 0, Replicated BUFG Driver: 0, Skipped due to Placement/Routing Conflicts: 0, Skipped due to Timing Degradation: 0, Skipped due to netlist editing failed: 0.
+Number of Failed Nets               = 616
+(Failed Nets is the sum of unrouted and partially routed nets)
+Number of Failed Nets               = 0
+(Failed Nets is the sum of unrouted and partially routed nets)
+2025-04-06 15:06:56,842 [INFO] Agent hls_builder status: failed - INFO: [Place 46-56] BUFG insertion identified 0 candidate nets. Inserted BUFG: 0, Replicated BUFG Driver: 0, Skipped due to Placement/Routing Conflicts: 0, Skipped due to Timing Degradation: 0, Skipped due to netlist editing failed: 0.
+Number of Failed Nets               = 616
+(Failed Nets is the sum of unrouted and partially routed nets)
+Number of Failed Nets               = 0
+(Failed Nets is the sum of unrouted and partially routed nets)
+2025-04-06 15:06:56,842 [INFO] Encountered error, running error handling: generate_documentation
+2025-04-06 15:06:56,842 [INFO] Executing workflow step: generate_documentation
+2025-04-06 15:06:56,842 [INFO] Running agent documentation_generator for step generate_documentation
+2025-04-06 15:06:56,842 [INFO] Agent documentation_generator status: running
+2025-04-06 15:06:56,842 [INFO] Analyzing performance reports...
+2025-04-06 15:06:57,128 [INFO] Analyzing LLM responses for insights...
+2025-04-06 15:06:57,128 [INFO] Analyzing code generation LLM response: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/llm_response.md
+2025-04-06 15:06:57,131 [INFO] Analyzing debug reports in: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/debug_reports
+2025-04-06 15:06:57,137 [INFO] Collecting workflow execution data...
+2025-04-06 15:06:57,137 [INFO] Generating documentation...
+2025-04-06 15:06:57,138 [INFO] Calling LLM with model gemini-2.5-pro-exp-03-25 to generate documentation...
+2025-04-06 15:10:16,909 [INFO] Agent documentation_generator status: success
+2025-04-06 15:10:16,910 [INFO] Workflow completed with status: success
+2025-04-06 15:10:16,910 [INFO] Agent workflow completed successfully
+2025-04-06 15:38:52,946 [INFO] Prompt manager initialized with directory: /home/jielei/Projects/UTS/llm-fpga-design/prompts
+2025-04-06 15:38:52,946 [INFO] Registered agent: code_generator
+2025-04-06 15:38:52,946 [INFO] Registered agent: debug_assistant
+2025-04-06 15:38:52,947 [INFO] Registered agent: makefile_generator
+2025-04-06 15:38:52,947 [INFO] Registered agent: performance_optimizer
+2025-04-06 15:38:52,947 [INFO] Registered agent: hls_builder
+2025-04-06 15:38:52,947 [INFO] Registered agent: documentation_generator
+2025-04-06 15:38:52,947 [INFO] Agent documentation_generator status: running
+2025-04-06 15:38:52,947 [INFO] Analyzing performance reports...
+2025-04-06 15:38:53,187 [INFO] Analyzing LLM responses for insights...
+2025-04-06 15:38:53,187 [INFO] Analyzing code generation LLM response: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/llm_response.md
+2025-04-06 15:38:53,190 [INFO] Analyzing debug reports in: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/debug_reports
+2025-04-06 15:38:53,196 [INFO] Collecting workflow execution data...
+2025-04-06 15:38:53,196 [INFO] Generating documentation...
+2025-04-06 15:38:53,197 [INFO] Calling LLM with model gemini-2.5-pro-exp-03-25 to generate documentation...
+2025-04-06 15:41:50,339 [INFO] Agent documentation_generator status: success
+2025-04-06 19:26:35,235 [INFO] Prompt manager initialized with directory: /home/jielei/Projects/UTS/llm-fpga-design/prompts
+2025-04-06 19:26:35,235 [INFO] Registered agent: code_generator
+2025-04-06 19:26:35,236 [INFO] Registered agent: debug_assistant
+2025-04-06 19:26:35,236 [INFO] Registered agent: makefile_generator
+2025-04-06 19:26:35,236 [INFO] Registered agent: performance_optimizer
+2025-04-06 19:26:35,236 [INFO] Registered agent: hls_builder
+2025-04-06 19:26:35,236 [INFO] Registered agent: documentation_generator
+2025-04-06 19:26:35,236 [INFO] Agent documentation_generator status: running
+2025-04-06 19:26:35,236 [INFO] Analyzing performance reports...
+2025-04-06 19:26:35,498 [INFO] Generated performance report at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/performance_metrics.md
+2025-04-06 19:26:35,498 [INFO] Analyzing LLM responses for insights...
+2025-04-06 19:26:35,498 [INFO] Analyzing code generation LLM response: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/llm_response.md
+2025-04-06 19:26:35,501 [INFO] Analyzing debug reports in: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/debug_reports
+2025-04-06 19:26:35,507 [INFO] Collecting workflow execution data...
+2025-04-06 19:26:35,508 [INFO] Generating documentation...
+2025-04-06 19:26:35,508 [INFO] Calling LLM with model gemini-2.5-pro-exp-03-25 to generate documentation...
+2025-04-06 19:29:54,444 [INFO] Agent documentation_generator status: success
+2025-04-06 20:13:46,400 [INFO] Prompt manager initialized with directory: /home/jielei/Projects/UTS/llm-fpga-design/prompts
+2025-04-06 20:13:46,400 [INFO] Registered agent: code_generator
+2025-04-06 20:13:46,400 [INFO] Registered agent: debug_assistant
+2025-04-06 20:13:46,400 [INFO] Registered agent: makefile_generator
+2025-04-06 20:13:46,400 [INFO] Registered agent: performance_optimizer
+2025-04-06 20:13:46,400 [INFO] Registered agent: hls_builder
+2025-04-06 20:13:46,400 [INFO] Registered agent: documentation_generator
+2025-04-06 20:13:46,400 [INFO] Agent documentation_generator status: running
+2025-04-06 20:13:46,400 [INFO] Analyzing performance reports...
+2025-04-06 20:13:46,635 [ERROR] Error generating performance report: Unknown format code 'f' for object of type 'str'
+2025-04-06 20:13:46,635 [INFO] Analyzing LLM responses for insights...
+2025-04-06 20:13:46,635 [INFO] Analyzing code generation LLM response: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/llm_response.md
+2025-04-06 20:13:46,638 [INFO] Analyzing debug reports in: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/debug_reports
+2025-04-06 20:13:46,644 [INFO] Collecting workflow execution data...
+2025-04-06 20:13:46,644 [INFO] Generating documentation...
+2025-04-06 20:13:46,645 [INFO] Calling LLM with model gemini-2.5-pro-exp-03-25 to generate documentation...
+2025-04-06 20:22:38,283 [INFO] Prompt manager initialized with directory: /home/jielei/Projects/UTS/llm-fpga-design/prompts
+2025-04-06 20:22:38,283 [INFO] Registered agent: code_generator
+2025-04-06 20:22:38,283 [INFO] Registered agent: debug_assistant
+2025-04-06 20:22:38,283 [INFO] Registered agent: makefile_generator
+2025-04-06 20:22:38,283 [INFO] Registered agent: performance_optimizer
+2025-04-06 20:22:38,283 [INFO] Registered agent: hls_builder
+2025-04-06 20:22:38,283 [INFO] Registered agent: documentation_generator
+2025-04-06 20:22:38,284 [INFO] Agent documentation_generator status: running
+2025-04-06 20:22:38,284 [INFO] Analyzing performance reports...
+2025-04-06 20:22:38,547 [INFO] Generated performance report at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/performance_metrics.md
+2025-04-06 20:22:38,547 [INFO] Analyzing LLM responses for insights...
+2025-04-06 20:22:38,547 [INFO] Analyzing code generation LLM response: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/llm_response.md
+2025-04-06 20:22:38,550 [INFO] Analyzing debug reports in: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/debug_reports
+2025-04-06 20:22:38,557 [INFO] Collecting workflow execution data...
+2025-04-06 20:22:38,557 [INFO] Generating documentation...
+2025-04-06 20:22:38,557 [INFO] Calling LLM with model gemini-2.5-pro-exp-03-25 to generate documentation...
+2025-04-06 20:26:01,193 [INFO] Agent documentation_generator status: success
+2025-04-06 20:55:53,924 [INFO] Prompt manager initialized with directory: /home/jielei/Projects/UTS/llm-fpga-design/prompts
+2025-04-06 20:55:53,924 [INFO] Registered agent: code_generator
+2025-04-06 20:55:53,924 [INFO] Registered agent: debug_assistant
+2025-04-06 20:55:53,924 [INFO] Registered agent: makefile_generator
+2025-04-06 20:55:53,924 [INFO] Registered agent: performance_optimizer
+2025-04-06 20:55:53,924 [INFO] Registered agent: hls_builder
+2025-04-06 20:55:53,924 [INFO] Registered agent: documentation_generator
+2025-04-06 20:55:53,924 [INFO] Agent documentation_generator status: running
+2025-04-06 20:55:53,924 [INFO] Analyzing performance reports...
+2025-04-06 20:55:54,201 [INFO] Generated performance report at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/performance_metrics.md
+2025-04-06 20:55:54,201 [INFO] Analyzing LLM responses for insights...
+2025-04-06 20:55:54,201 [INFO] Analyzing code generation LLM response: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/llm_response.md
+2025-04-06 20:55:54,204 [INFO] Analyzing debug reports in: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/debug_reports
+2025-04-06 20:55:54,210 [INFO] Collecting workflow execution data...
+2025-04-06 20:55:54,210 [INFO] Generating documentation...
+2025-04-06 20:55:54,211 [INFO] Calling LLM with model gemini-2.5-pro-exp-03-25 to generate documentation...
+2025-04-06 20:59:21,513 [INFO] Agent documentation_generator status: success
+2025-04-06 21:21:18,615 [INFO] Prompt manager initialized with directory: /home/jielei/Projects/UTS/llm-fpga-design/prompts
+2025-04-06 21:21:18,615 [INFO] Registered agent: code_generator
+2025-04-06 21:21:18,615 [INFO] Registered agent: debug_assistant
+2025-04-06 21:21:18,615 [INFO] Registered agent: makefile_generator
+2025-04-06 21:21:18,616 [INFO] Registered agent: performance_optimizer
+2025-04-06 21:21:18,616 [INFO] Registered agent: hls_builder
+2025-04-06 21:21:18,616 [INFO] Registered agent: documentation_generator
+2025-04-06 21:21:18,617 [INFO] Agent documentation_generator status: running
+2025-04-06 21:21:18,617 [INFO] Analyzing performance reports...
+2025-04-06 21:21:18,895 [INFO] Generated performance report at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/performance_metrics.md
+2025-04-06 21:21:18,895 [INFO] Analyzing LLM responses for insights...
+2025-04-06 21:21:18,895 [INFO] Analyzing code generation LLM response: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/llm_response.md
+2025-04-06 21:21:18,898 [INFO] Analyzing debug reports in: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/debug_reports
+2025-04-06 21:21:18,904 [INFO] Collecting workflow execution data...
+2025-04-06 21:21:18,904 [INFO] Generating documentation...
+2025-04-06 21:21:18,905 [INFO] Calling LLM with model gemini-2.5-pro-exp-03-25 to generate documentation...
+2025-04-06 21:24:27,350 [INFO] Agent documentation_generator status: success
+2025-04-06 21:56:03,569 [INFO] Prompt manager initialized with directory: /home/jielei/Projects/UTS/llm-fpga-design/prompts
+2025-04-06 21:56:03,570 [INFO] Registered agent: code_generator
+2025-04-06 21:56:03,570 [INFO] Registered agent: debug_assistant
+2025-04-06 21:56:03,570 [INFO] Registered agent: makefile_generator
+2025-04-06 21:56:03,570 [INFO] Registered agent: performance_optimizer
+2025-04-06 21:56:03,570 [INFO] Registered agent: hls_builder
+2025-04-06 21:56:03,570 [INFO] Registered agent: documentation_generator
+2025-04-06 21:56:03,570 [INFO] Agent documentation_generator status: running
+2025-04-06 21:56:03,570 [INFO] Analyzing performance reports...
+2025-04-06 21:56:03,843 [INFO] Generated performance report at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/performance_metrics.md
+2025-04-06 21:56:03,843 [INFO] Analyzing LLM responses for insights...
+2025-04-06 21:56:03,843 [INFO] Analyzing code generation LLM response: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/llm_response.md
+2025-04-06 21:56:03,846 [INFO] Analyzing debug reports in: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/debug_reports
+2025-04-06 21:56:03,852 [INFO] Collecting workflow execution data...
+2025-04-06 21:56:03,852 [INFO] Generating documentation...
+2025-04-06 21:56:03,853 [INFO] Calling LLM with model gemini-2.5-pro-exp-03-25 to generate documentation...
+2025-04-06 21:59:23,375 [INFO] Agent documentation_generator status: success
+2025-04-06 22:18:02,921 [INFO] Prompt manager initialized with directory: /home/jielei/Projects/UTS/llm-fpga-design/prompts
+2025-04-06 22:18:02,921 [INFO] Registered agent: code_generator
+2025-04-06 22:18:02,922 [INFO] Registered agent: debug_assistant
+2025-04-06 22:18:02,922 [INFO] Registered agent: makefile_generator
+2025-04-06 22:18:02,922 [INFO] Registered agent: performance_optimizer
+2025-04-06 22:18:02,922 [INFO] Registered agent: hls_builder
+2025-04-06 22:18:02,922 [INFO] Registered agent: documentation_generator
+2025-04-06 22:18:02,922 [INFO] Agent documentation_generator status: running
+2025-04-06 22:18:02,922 [INFO] Analyzing performance reports...
+2025-04-06 22:18:03,197 [INFO] Generated performance report at /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/performance_metrics.md
+2025-04-06 22:18:03,197 [INFO] Analyzing LLM responses for insights...
+2025-04-06 22:18:03,198 [INFO] Analyzing code generation LLM response: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/llm_response.md
+2025-04-06 22:18:03,200 [INFO] Analyzing debug reports in: /home/jielei/Projects/UTS/llm-fpga-design/implementations/peakPicker/debug_reports
+2025-04-06 22:18:03,207 [INFO] Collecting workflow execution data...
+2025-04-06 22:18:03,207 [INFO] Generating documentation...
+2025-04-06 22:18:03,207 [INFO] Calling LLM with model gemini-2.5-pro-exp-03-25 to generate documentation...
+2025-04-06 22:21:23,550 [INFO] Agent documentation_generator status: success

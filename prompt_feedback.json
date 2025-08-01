@@ -1,0 +1,2 @@
+{"prompt": "hls_generation", "timestamp": "2025-04-06T11:38:21.561719", "model": "gemini-2.5-pro-exp-03-25", "component": "peakPicker", "status": "success", "files_generated": 3, "file_types": ["peakPicker_tb.cpp", "peakPicker.hpp", "peakPicker.cpp"]}
+{"prompt": "hls_generation", "timestamp": "2025-04-06T15:00:21.333684", "model": "gemini-2.5-pro-exp-03-25", "component": "peakPicker", "status": "success", "files_generated": 3, "file_types": ["peakPicker.hpp", "peakPicker.cpp", "peakPicker_tb.cpp"]}

@@ -1,67 +1,56 @@
+/* AUTO-EDITED BY DEBUG ASSISTANT */
 #ifndef PEAK_PICKER_HPP
 #define PEAK_PICKER_HPP
 
 #include <ap_fixed.h>
 #include <hls_stream.h>
-#include <hls_vector.h> // Required for hls::vector
+#include <ap_int.h> // For integer types if needed for indices
 
 //--------------------------------------------------------------------------
 // Constants and Parameters
 //--------------------------------------------------------------------------
 
-// Fixed-point precision for correlation and threshold values
-constexpr int DATA_W = 20; // Total width
-constexpr int DATA_I = 1; // Integer width
+// Fixed-point type configuration (Adjust W and I based on signal analysis)
+constexpr int DATA_W = 32; // Total width
+constexpr int DATA_I = 16; // Integer width (including sign bit)
 
-// Number of parallel PSS correlation sequences
-constexpr int NUM_SEQUENCES = 1;
-
-// Sliding window length (must be odd)
+// Sliding window configuration (Matches MATLAB reference)
 constexpr int WINDOW_LENGTH = 11;
-static_assert(WINDOW_LENGTH % 2 != 0, "WINDOW_LENGTH must be odd");
+constexpr int MIDDLE_LOCATION = WINDOW_LENGTH / 2; // Index 5 (0-based)
 
-// Middle location offset within the window (0-based index)
-constexpr int MIDDLE_LOCATION = WINDOW_LENGTH / 2;
-
-// Maximum expected number of peaks (for sizing internal buffers if needed,
-// though stream output avoids large output buffers in the core function)
-// This is more relevant for non-streaming outputs or internal logic.
-// constexpr int MAX_PEAKS = 100; // Example if needed
+// Index type configuration (Ensure it can hold the maximum sample index)
+constexpr int INDEX_W = 32; // Width for location indices
 
 //--------------------------------------------------------------------------
 // Type Definitions
 //--------------------------------------------------------------------------
 
-// Fixed-point type for input data (correlation magnitude squared, threshold)
+// Fixed-point type for input data (xcorr and threshold)
 typedef ap_fixed<DATA_W, DATA_I> Data_t;
 
-// Vector type to hold samples from all sequences at a single time index
-// Useful for streaming multiple sequences concurrently
-typedef hls::vector<Data_t, NUM_SEQUENCES> InputSample_t;
-
-// Type for output peak locations (indices)
-typedef int Index_t;
+// Type for output location indices
+// Using ap_uint for non-negative indices. Use ap_int if indices can be negative.
+// Or simply use 'int' if standard integer sizes are sufficient and synthesizable.
+typedef ap_uint<INDEX_W> Index_t;
+// typedef int Index_t; // Alternative if standard int is sufficient
 
 //--------------------------------------------------------------------------
 // Function Declaration
 //--------------------------------------------------------------------------
 
 /**
- * @brief Identifies peaks in PSS correlation data using a sliding window.
+ * @brief Finds peaks in a cross-correlation signal using a sliding window.
  *
- * @param xcorrStream       Input stream of PSS correlation magnitude squared values.
- *                          Each element is an hls::vector containing values for all sequences
- *                          at a given time index.
- * @param thresholdStream   Input stream of threshold values, corresponding element-wise
- *                          to xcorrStream.
- * @param locationsStream   Output stream for detected peak locations (0-based indices).
- * @param dataLength        Total number of samples per sequence in the input streams.
+ * @param xcorrStream     Input stream of cross-correlation magnitude squared values.
+ * @param thresholdStream Input stream of threshold values (corresponding to xcorr samples).
+ * @param locationStream  Output stream for detected peak location indices (0-based).
+ * @param numSamples      Total number of samples to process from the input streams.
  */
 void peakPicker(
-    hls::stream<InputSample_t>& xcorrStream,
-    hls::stream<InputSample_t>& thresholdStream,
-    hls::stream<Index_t>& locationsStream,
-    int dataLength
+    hls::stream<Data_t>& xcorrStream,
+    hls::stream<Data_t>& thresholdStream,
+    hls::stream<Index_t>& locationStream,
+    int numSamples
 );
 
 #endif // PEAK_PICKER_HPP
