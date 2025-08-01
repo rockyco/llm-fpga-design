@@ -14,5 +14,6 @@ scripts/__pycache__/
 # scripts/agent_framework.py
 # scripts/generate_documentation.py
 record/
+example/proj_peakPicker
 # workflows/
 /*_log.txt

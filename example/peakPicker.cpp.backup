@@ -1,0 +1,94 @@
+#include "peakPicker.hpp"
+
+#ifdef __SYNTHESIS__
+#include <hls_stream.h>
+#endif
+
+void peakPicker(
+    data_t xcorr[MAX_INPUT_SIZE],
+    data_t threshold[MAX_INPUT_SIZE], 
+    index_t input_length,
+    index_t locations[MAX_PEAKS],
+    index_t* num_peaks
+) {
+#ifdef __SYNTHESIS__
+    // Set interface pragmas for optimal hardware interface
+    #pragma HLS INTERFACE m_axi port=xcorr offset=slave bundle=gmem0
+    #pragma HLS INTERFACE m_axi port=threshold offset=slave bundle=gmem1
+    #pragma HLS INTERFACE m_axi port=locations offset=slave bundle=gmem2
+    #pragma HLS INTERFACE m_axi port=num_peaks offset=slave bundle=gmem3
+    #pragma HLS INTERFACE s_axilite port=input_length bundle=control
+    #pragma HLS INTERFACE s_axilite port=return bundle=control
+#endif
+    
+    // Local buffers for sliding window implementation
+    data_t xcorrBuffer[WINDOW_LENGTH];
+    data_t thresholdBuffer[WINDOW_LENGTH];
+    
+    // Initialize buffers to zero
+    init_buffers: for (int i = 0; i < WINDOW_LENGTH; i++) {
+        #pragma HLS UNROLL
+        xcorrBuffer[i] = 0;
+        thresholdBuffer[i] = 0;
+    }
+    
+    index_t peak_count = 0;
+    
+    // Main processing loop - sliding window peak detection
+    main_loop: for (index_t index = 0; index < input_length - WINDOW_LENGTH + 1; index++) {
+#ifdef __SYNTHESIS__
+        #pragma HLS PIPELINE II=1
+        #pragma HLS LOOP_TRIPCOUNT min=5991 max=5991 avg=5991
+#endif
+        
+        // Shift buffers and add new samples (hardware-friendly shift register)
+        shift_xcorr: for (int i = WINDOW_LENGTH - 1; i > 0; i--) {
+#ifdef __SYNTHESIS__
+            #pragma HLS UNROLL
+#endif
+            xcorrBuffer[i] = xcorrBuffer[i-1];
+        }
+        xcorrBuffer[0] = xcorr[index];
+        
+        shift_threshold: for (int i = WINDOW_LENGTH - 1; i > 0; i--) {
+#ifdef __SYNTHESIS__
+            #pragma HLS UNROLL
+#endif
+            thresholdBuffer[i] = thresholdBuffer[i-1];
+        }
+        thresholdBuffer[0] = threshold[index];
+        
+        // Check for peak only after buffer is full
+        if (index >= WINDOW_LENGTH - 1) {
+            index_t candidate_location = index - MIDDLE_LOCATION;
+            
+            // Get middle sample for comparison
+            data_t midSample = xcorrBuffer[MIDDLE_LOCATION];
+            data_t midThreshold = thresholdBuffer[MIDDLE_LOCATION];
+            
+            // Check if middle sample is greater than threshold
+            bool above_threshold = (midSample > midThreshold);
+            
+            // Hardware-friendly peak detection: check if middle sample is local maximum
+            bool is_peak = true;
+            peak_check: for (int i = 0; i < WINDOW_LENGTH; i++) {
+#ifdef __SYNTHESIS__
+                #pragma HLS UNROLL
+#endif
+                if (i != MIDDLE_LOCATION) {
+                    if (xcorrBuffer[i] > midSample) {
+                        is_peak = false;
+                    }
+                }
+            }
+            
+            // Store peak location if conditions are met
+            if (is_peak && above_threshold && peak_count < MAX_PEAKS) {
+                locations[peak_count] = candidate_location + 1; // MATLAB 1-indexed
+                peak_count++;
+            }
+        }
+    }
+    
+    *num_peaks = peak_count;
+}

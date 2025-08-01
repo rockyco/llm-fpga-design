@@ -1,0 +1,124 @@
+
+****** Vitis HLS - High-Level Synthesis from C, C++ and OpenCL v2024.2.2 (64-bit)
+  **** SW Build 6049644 on Mar  5 2025
+  **** IP Build 6050500 on Thu Mar  6 23:33:39 MST 2025
+  **** SharedData Build 6060542 on Thu Mar 06 10:31:07 MST 2025
+  **** Start of session at: Fri Aug  1 14:42:38 2025
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source /opt/Xilinx/Vitis/2024.2/scripts/vitis_hls/hls.tcl -notrace
+INFO: [HLS 200-10] For user 'amd' on host 'amd' (Linux_x86_64 version 6.8.0-65-generic) on Fri Aug 01 14:42:39 AEST 2025
+INFO: [HLS 200-10] On os Ubuntu 22.04.5 LTS
+INFO: [HLS 200-10] In directory '/home/amd/UTS/llm-fpga-design/example'
+WARNING: [HLS 200-2053] The vitis_hls executable is deprecated. Consider using vitis-run --mode hls --tcl
+Sourcing Tcl script 'csynth.tcl'
+INFO: [HLS 200-1510] Running: open_project proj_peakPicker 
+INFO: [HLS 200-10] Creating and opening project '/home/amd/UTS/llm-fpga-design/example/proj_peakPicker'.
+INFO: [HLS 200-1510] Running: set_top peakPicker 
+INFO: [HLS 200-1510] Running: add_files peakPicker.cpp 
+INFO: [HLS 200-10] Adding design file 'peakPicker.cpp' to the project
+INFO: [HLS 200-1510] Running: add_files -tb peakPicker_tb.cpp 
+INFO: [HLS 200-10] Adding test bench file 'peakPicker_tb.cpp' to the project
+INFO: [HLS 200-1510] Running: add_files -tb ./locations_3_ref.txt 
+INFO: [HLS 200-10] Adding test bench file './locations_3_ref.txt' to the project
+INFO: [HLS 200-1510] Running: add_files -tb ./peakLocs_out.txt 
+INFO: [HLS 200-10] Adding test bench file './peakLocs_out.txt' to the project
+INFO: [HLS 200-1510] Running: add_files -tb ./pssCorrMagSq_3_in.txt 
+INFO: [HLS 200-10] Adding test bench file './pssCorrMagSq_3_in.txt' to the project
+INFO: [HLS 200-1510] Running: add_files -tb ./threshold_in.txt 
+INFO: [HLS 200-10] Adding test bench file './threshold_in.txt' to the project
+INFO: [HLS 200-1510] Running: open_solution solution1 
+INFO: [HLS 200-10] Creating and opening solution '/home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1'.
+INFO: [HLS 200-1505] Using default flow_target 'vivado'
+Resolution: For help on HLS 200-1505 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.2%20English&url=ug1448-hls-guidance&resourceid=200-1505.html
+INFO: [HLS 200-1510] Running: set_part xc7k410t-ffg900-2 
+INFO: [HLS 200-1611] Setting target device to 'xc7k410t-ffg900-2'
+INFO: [HLS 200-1510] Running: create_clock -period 3.90 -name default 
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 3.9ns.
+INFO: [HLS 200-1510] Running: set_clock_uncertainty 12.5% 
+INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 0.487ns.
+INFO: [HLS 200-1510] Running: csynth_design 
+INFO: [HLS 200-111] Finished File checks and directory preparation: CPU user time: 0.04 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.04 seconds; current allocated memory: 640.586 MB.
+INFO: [HLS 200-10] Analyzing design file 'peakPicker.cpp' ... 
+INFO: [HLS 200-111] Finished Source Code Analysis and Preprocessing: CPU user time: 1.67 seconds. CPU system time: 0.5 seconds. Elapsed time: 2.19 seconds; current allocated memory: 642.633 MB.
+INFO: [HLS 200-777] Using interface defaults for 'Vivado' flow target.
+INFO: [HLS 200-1995] There were 912 instructions in the design after the 'Compile/Link' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 298 instructions in the design after the 'Unroll/Inline (step 1)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 148 instructions in the design after the 'Unroll/Inline (step 2)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 146 instructions in the design after the 'Unroll/Inline (step 3)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 146 instructions in the design after the 'Unroll/Inline (step 4)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 68 instructions in the design after the 'Array/Struct (step 1)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 68 instructions in the design after the 'Array/Struct (step 2)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 68 instructions in the design after the 'Array/Struct (step 3)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 68 instructions in the design after the 'Array/Struct (step 4)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 70 instructions in the design after the 'Array/Struct (step 5)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 70 instructions in the design after the 'Performance (step 1)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 69 instructions in the design after the 'Performance (step 2)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 68 instructions in the design after the 'Performance (step 3)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 68 instructions in the design after the 'Performance (step 4)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 77 instructions in the design after the 'HW Transforms (step 1)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 79 instructions in the design after the 'HW Transforms (step 2)' phase of compilation. See the Design Size Report for more details: /home/amd/UTS/llm-fpga-design/example/proj_peakPicker/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 214-186] Unrolling loop 'init_sr' (peakPicker.cpp:36:11) in function 'peakPicker_wrapper' completely with a factor of 11 (peakPicker.cpp:14:0)
+INFO: [HLS 200-111] Finished Compiling Optimization and Transform: CPU user time: 1.52 seconds. CPU system time: 0.44 seconds. Elapsed time: 6.66 seconds; current allocated memory: 652.320 MB.
+INFO: [HLS 200-111] Finished Checking Pragmas: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0 seconds; current allocated memory: 652.320 MB.
+INFO: [HLS 200-10] Starting code transformations ...
+INFO: [HLS 200-111] Finished Standard Transforms: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.01 seconds; current allocated memory: 652.391 MB.
+INFO: [HLS 200-10] Checking synthesizability ...
+INFO: [HLS 200-111] Finished Checking Synthesizability: CPU user time: 0.01 seconds. CPU system time: 0.01 seconds. Elapsed time: 0 seconds; current allocated memory: 652.406 MB.
+INFO: [XFORM 203-11] Balancing expressions in function 'peakPicker_wrapper' (peakPicker.cpp:47:13)...11 expression(s) balanced.
+INFO: [HLS 200-111] Finished Loop, function and other optimizations: CPU user time: 0.01 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 673.844 MB.
+INFO: [HLS 200-111] Finished Architecture Synthesis: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.01 seconds; current allocated memory: 674.102 MB.
+INFO: [HLS 200-10] Starting hardware synthesis ...
+INFO: [HLS 200-10] Synthesizing 'peakPicker' ...
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'peakPicker_wrapper' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'ultra_main_loop'.
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 4, loop 'ultra_main_loop'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.06 seconds; current allocated memory: 675.617 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.01 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 675.617 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'peakPicker' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.02 seconds; current allocated memory: 675.617 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.01 seconds. CPU system time: 0 seconds. Elapsed time: 0.01 seconds; current allocated memory: 675.617 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'peakPicker_wrapper' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'peakPicker_wrapper' pipeline 'ultra_main_loop' pipeline type 'loop pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'peakPicker_wrapper'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 675.617 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'peakPicker' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-500] Setting interface mode on port 'peakPicker/xcorr' to 'ap_memory'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'peakPicker/threshold' to 'ap_memory'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'peakPicker/input_length' to 'ap_none'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'peakPicker/locations' to 'ap_memory'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'peakPicker/num_peaks' to 'ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on function 'peakPicker' to 'ap_ctrl_hs'.
+INFO: [RTGEN 206-100] Finished creating RTL model for 'peakPicker'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.06 seconds. CPU system time: 0 seconds. Elapsed time: 0.07 seconds; current allocated memory: 676.344 MB.
+INFO: [HLS 200-111] Finished Generating all RTL models: CPU user time: 0.09 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.1 seconds; current allocated memory: 679.273 MB.
+INFO: [HLS 200-111] Finished Updating report files: CPU user time: 0.14 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.14 seconds; current allocated memory: 681.910 MB.
+INFO: [VHDL 208-304] Generating VHDL RTL for peakPicker.
+INFO: [VLOG 209-307] Generating Verilog RTL for peakPicker.
+INFO: [HLS 200-790] **** Loop Constraint Status: All loop constraints were satisfied.
+INFO: [HLS 200-789] **** Estimated Fmax: 310.46 MHz
+INFO: [HLS 200-2161] Finished Command csynth_design Elapsed time: 00:00:09; Allocated memory: 41.367 MB.
+INFO: [HLS 200-112] Total CPU user time: 6.22 seconds. Total CPU system time: 1.48 seconds. Total elapsed time: 12.27 seconds; peak allocated memory: 681.953 MB.
