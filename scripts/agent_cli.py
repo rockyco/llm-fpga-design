@@ -176,13 +176,13 @@ class FPGAAgentShell(cmd.Cmd):
             print(f"Error: Prompt file not found: {prompt_file}")
             return
         elif not prompt_file:
-            # Use default prompt file
+            # Use hls_generation.md as standard prompt file
             default_prompt = os.path.join(self.current_project_dir, "prompts", "hls_generation.md")
             if os.path.isfile(default_prompt):
                 prompt_file = default_prompt
             else:
-                print(f"Error: Default prompt file not found: {default_prompt}")
-                print("Please specify a prompt file or create the default one")
+                print(f"Error: Standard prompt file not found: {default_prompt}")
+                print("Please specify a prompt file or create the standard one")
                 return
         
         # Use component name or extract from first filename
@@ -196,11 +196,12 @@ class FPGAAgentShell(cmd.Cmd):
         output_dir = os.path.join(self.current_project_dir, "implementations")
         agent_context = {
             "args": {
-                "matlab_file": matlab_files,  # Pass all MATLAB files
+                "matlab_file": matlab_files,
                 "prompt": prompt_file,
+                "prompt_name": "hls_generation",  # Always use hls_generation as prompt name
                 "output_dir": output_dir,
                 "model": model_name,
-                "timeout": self.generate_timeout  # Pass timeout parameter
+                "timeout": self.generate_timeout
             }
         }
         
@@ -425,6 +426,138 @@ class FPGAAgentShell(cmd.Cmd):
         else:
             print(f"Makefile generation failed: {agent.error_message}")
     
+    def do_generate_documentation(self, arg):
+        """Generate documentation for the current component: generate_documentation [--format readme|paper|both] [--model model_name]"""
+        # Parse arguments
+        args = arg.split()
+        model_name = self.default_model
+        output_format = ["readme", "paper"]  # Default: both
+        
+        i = 0
+        while i < len(args):
+            if args[i] == '--model' and i + 1 < len(args):
+                model_name = args[i+1]
+                i += 2
+            elif args[i] == '--format' and i + 1 < len(args):
+                fmt = args[i+1].lower()
+                if fmt == "both":
+                    output_format = ["readme", "paper"]
+                elif fmt in ["readme", "paper"]:
+                    output_format = [fmt]
+                else:
+                    print(f"Error: Invalid format '{fmt}'. Must be one of: readme, paper, both")
+                    return
+                i += 2
+            else:
+                i += 1
+                
+        # Check if we have a component
+        if not self.current_component:
+            print("Error: No component selected. Use 'set_component' first.")
+            return
+        
+        # Check if component directory exists
+        component_dir = self.current_context.get("component_dir")
+        if not component_dir or not os.path.isdir(component_dir):
+            # Try to find it in the default location
+            component_dir = os.path.join(self.current_project_dir, "implementations", self.current_component)
+            if not os.path.isdir(component_dir):
+                print(f"Error: Component directory not found: {component_dir}")
+                return
+            
+            self.current_context["component_dir"] = component_dir
+        
+        # Get workflow history
+        history = self.orchestrator.get_history()
+        if not history:
+            # Try to run analyze function even without history
+            print("Warning: No workflow history found. Documentation may be limited.")
+        
+        # Set up context for documentation agent
+        agent_context = {
+            "component_dir": component_dir,
+            "component": self.current_component,
+            "history": history,
+            "complete_context": self.current_context,
+            "output_format": output_format,
+            "model": model_name
+        }
+        
+        # Run documentation agent
+        print(f"Generating documentation for {self.current_component}...")
+        print(f"Output formats: {', '.join(output_format)}")
+        agent = self.orchestrator.agents["documentation_generator"]
+        result = agent.run(agent_context)
+        
+        if agent.status == AgentStatus.SUCCESS:
+            print("Documentation generation completed successfully!")
+            output_dir = result.get("output", {}).get("output_dir", component_dir)
+            if "files" in result.get("output", {}):
+                for fmt, content in result["output"]["files"].items():
+                    print(f"- {fmt.capitalize()} file generated at: {os.path.join(output_dir, fmt + '.md')}")
+        else:
+            print(f"Documentation generation failed: {agent.error_message}")
+    
+    def do_analyze_performance(self, arg):
+        """Analyze performance metrics for the current component"""
+        # Check if we have a component
+        if not self.current_component:
+            print("Error: No component selected. Use 'set_component' first.")
+            return
+        
+        # Check if component directory exists
+        component_dir = self.current_context.get("component_dir")
+        if not component_dir or not os.path.isdir(component_dir):
+            # Try to find it in the default location
+            component_dir = os.path.join(self.current_project_dir, "implementations", self.current_component)
+            if not os.path.isdir(component_dir):
+                print(f"Error: Component directory not found: {component_dir}")
+                return
+            
+            self.current_context["component_dir"] = component_dir
+        
+        # Use documentation agent's analyze_reports method
+        agent = self.orchestrator.agents["documentation_generator"]
+        print(f"Analyzing performance metrics for {self.current_component}...")
+        metrics = agent.analyze_reports(component_dir)
+        
+        if "error" in metrics:
+            print(f"Error analyzing metrics: {metrics['error']}")
+            return
+        
+        # Print resource utilization
+        if "resources" in metrics and metrics["resources"]:
+            print("\nResource Utilization:")
+            print("---------------------")
+            for impl, resources in metrics["resources"].items():
+                print(f"Implementation: {impl}")
+                for res, val in resources.items():
+                    print(f"  {res}: {val}")
+        else:
+            print("\nNo resource utilization data available.")
+        
+        # Print timing information
+        if "timing" in metrics and metrics["timing"]:
+            print("\nTiming (MHz):")
+            print("-------------")
+            for impl, timing in metrics["timing"].items():
+                print(f"Implementation: {impl}")
+                for time_type, val in timing.items():
+                    # Convert to MHz for clarity
+                    mhz = 1000/val if val > 0 else 0
+                    print(f"  {time_type}: {val}ns ({mhz:.2f} MHz)")
+        else:
+            print("\nNo timing data available.")
+        
+        # Print latency information
+        if "latency" in metrics and metrics["latency"]:
+            print("\nLatency (cycles):")
+            print("----------------")
+            for impl, latency in metrics["latency"].items():
+                print(f"Implementation: {impl}: {latency} cycles")
+        else:
+            print("\nNo latency data available.")
+    
     def do_run_workflow(self, arg):
         """Run the complete workflow on the current component"""
         if not self.workflow_file:
@@ -473,6 +606,70 @@ class FPGAAgentShell(cmd.Cmd):
     # Aliases
     do_exit = do_quit
     do_q = do_quit
+    do_docs = do_generate_documentation
+    do_analyze = do_analyze_performance
+
+    def do_optimize(self, arg):
+        """Optimize HLS code for performance: optimize [--primary goal] [--secondary goal] [--model model_name]"""
+        # Parse arguments
+        args = arg.split()
+        model_name = self.default_model
+        primary_goal = "Reduce latency"
+        secondary_goal = "Maintain resource usage"
+        
+        i = 0
+        while i < len(args):
+            if args[i] == '--model' and i + 1 < len(args):
+                model_name = args[i+1]
+                i += 2
+            elif args[i] == '--primary' and i + 1 < len(args):
+                primary_goal = args[i+1]
+                i += 2
+            elif args[i] == '--secondary' and i + 1 < len(args):
+                secondary_goal = args[i+1]
+                i += 2
+            else:
+                i += 1
+                
+        # Check if we have a component
+        if not self.current_component:
+            print("Error: No component selected. Use 'set_component' first.")
+            return
+        
+        # Check if component directory exists
+        component_dir = self.current_context.get("component_dir")
+        if not component_dir or not os.path.isdir(component_dir):
+            # Try to find it in the default location
+            component_dir = os.path.join(self.current_project_dir, "implementations", self.current_component)
+            if not os.path.isdir(component_dir):
+                print(f"Error: Component directory not found: {component_dir}")
+                return
+            
+            self.current_context["component_dir"] = component_dir
+        
+        # Set up context for optimization agent
+        agent_context = {
+            "args": {
+                "source_dir": component_dir,
+                "model": model_name,
+                "primary_goal": primary_goal,
+                "secondary_goal": secondary_goal,
+                "prompt_name": "performance_optimization"
+            }
+        }
+        
+        # Run optimization agent
+        print(f"Optimizing HLS code for {self.current_component}...")
+        print(f"Primary goal: {primary_goal}")
+        print(f"Secondary goal: {secondary_goal}")
+        agent = self.orchestrator.agents["performance_optimizer"]
+        result = agent.run(agent_context)
+        
+        if agent.status == AgentStatus.SUCCESS:
+            print("Code optimization completed successfully!")
+            print("Run 'build csynth' to synthesize the optimized code")
+        else:
+            print(f"Code optimization failed: {agent.error_message}")
 
 def main():
     """Main function for running the FPGA agent CLI"""
@@ -484,6 +681,24 @@ def main():
     parser.add_argument("--debug-timeout", type=int, help="Set debug timeout in seconds", default=300)
     parser.add_argument("--generate-timeout", type=int, help="Set code generation timeout in seconds", default=600)
     parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
+    
+    # Add new arguments for direct documentation generation
+    parser.add_argument("--generate-docs", action="store_true", help="Generate documentation without entering the shell")
+    parser.add_argument("--doc-format", choices=["readme", "paper", "both"], default="both", 
+                       help="Documentation format (readme, paper, or both)")
+    
+    # Add optimization option
+    parser.add_argument("--optimize", action="store_true", 
+                       help="Optimize the component for performance")
+    parser.add_argument("--primary-goal", default="Reduce latency", 
+                       help="Primary optimization goal")
+    parser.add_argument("--secondary-goal", default="Maintain resource usage", 
+                       help="Secondary optimization goal")
+    
+    # Add prompt standardization
+    parser.add_argument("--prompt-name", default="hls_generation",
+                        help="Prompt name to use (default: hls_generation)")
+    
     args = parser.parse_args()
     
     # Configure logging based on verbosity
@@ -505,6 +720,36 @@ def main():
     
     if args.workflow:
         shell.do_load_workflow(args.workflow)
+    
+    # Run documentation generation directly if requested
+    if args.generate_docs:
+        if not args.component:
+            print("Error: --component is required when using --generate-docs")
+            sys.exit(1)
+            
+        # Prepare format arg for do_generate_documentation
+        if args.doc_format == "both":
+            format_arg = ""  # Default is both
+        else:
+            format_arg = f"--format {args.doc_format}"
+            
+        # Add model if specified
+        model_arg = f"--model {args.model}" if args.model else ""
+        
+        # Run the documentation generation
+        shell.do_generate_documentation(f"{format_arg} {model_arg}".strip())
+        sys.exit(0)
+    
+    # Run optimization if requested
+    if args.optimize:
+        if not args.component:
+            print("Error: --component is required when using --optimize")
+            sys.exit(1)
+            
+        # Prepare arguments for do_optimize
+        opt_args = f"--primary \"{args.primary_goal}\" --secondary \"{args.secondary_goal}\" --model {args.model}"
+        shell.do_optimize(opt_args)
+        sys.exit(0)
     
     # Start the interactive shell
     shell.cmdloop()
